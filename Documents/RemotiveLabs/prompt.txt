@@ -1,0 +1,47 @@
+You are given a dbc file Model3CAN.dbc describing the CAN signals from a Tesla Model 3. You are then given several .vspec files describing standard signals according to VSS. Try to map the signals from the dbc file into VSS format. The main branches of VSS are given in the file VehicleSignalSpecification.vspec, a branch may have several instances such as:
+Axle:
+  instances:
+    - Row[1,2]
+  type: branch
+  description: Axle signals
+This means there are two axles that are accessed like Axle.Row1 and Axle.Row2, these axles may have subbranches such as:
+Axle.Wheel:
+  instances: ["Left","Right"]
+  type: branch
+  description: Wheel signals for axle
+Which means there are two wheels per axle, e.g. Axle.Row1.Wheel.Left and Axle.Row.Wheel.Right. Do not try to map signals that are marked as deprecated or that have "type: attribute". You may need to use simple formulas or multiply by factors to get the signals to the correct units. For each signal in VSS that you can map write for example:
+
+"Vehicle.Speed": {
+         "namespace": "VehicleBus",
+         "name": "ID257DIspeed.DI_vehicleSpeed"
+      }
+
+or
+
+"Vehicle.TraveledDistance": {
+         "namespace": "ChassisBus",
+         "name": "ID3F3UI_odo.UI_odometer"
+      }
+
+if you only need a renaming, or
+
+"Vehicle.Powertrain.Range": {
+    "namespace": "VehicleBus"
+    "name": "ID33AUI_rangeSOC.UI_Range",
+    "formula": signals["ID33AUI_rangeSOC.UI_Range"] * 1609.34
+}
+
+or
+"Vehicle.Powertrain.ElectricMotor.Power": {
+    {
+       "namespace": "VehicleBus",
+        "name": "ID266RearInverterPower.RearPower266"
+    },
+    {
+       "namespace": "VehicleBus",
+        "name": "ID2E5FrontInverterPower.FrontPower2E5"
+    }
+    "formula": signals["ID266RearInverterPower.RearPower266"] + signals["ID2E5FrontInverterPower.FrontPower2E5"]
+}
+
+if you need to use a simple formula to calculate the signal.

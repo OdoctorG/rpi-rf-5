@@ -1,0 +1,14 @@
+Generate Lua script template skapar radbrytningar i kommentarer
+example - remotive broker scripting new-script --input-signal VehicleBus:ID129SteeringAngle.SteeringSpeed129  --input-signal VehicleBus:ID129SteeringAngle.SteeringAngle129  --input-signal VehicleBus:ID129SteeringAngle --output-signal Vehicle.Speed
+
+Subscription Ended - dåligt felmedellande
+
+Video hamnar ur synk när man hoppar runt.
+
+"remotive cloud auth login" fungerar inte i WSL, fungerar med access token
+
+
+TODO:
+invertera strömmen
+Kolla om man snabbladdar eller inte för att beräkna laddnings maxström
+

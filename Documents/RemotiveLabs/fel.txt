@@ -1,0 +1,5 @@
+-- Vehicle.Cabin.HVAC.Station.Row1.Passenger.Temperature NOK
+-- Vehicle.Cabin.HVAC.Station.Row1.Driver.Temperature NOK
+-- Vehicle.Powertrain.TractionBattery.Charging.ChargeCurrent.DC fast charging/ej testad
+-- Vehicle.Powertrain.TractionBattery.Charging.MaximumChargingCurrent.DC fast charging/ej testad
+

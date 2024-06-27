@@ -1,0 +1,99 @@
+{
+   "description": "COVESA VSS mapping information",
+   "formatVersion": "0.1.0",
+   "scripts_location": "scripts",
+   "simple_mapping": {
+      "Vehicle.Powertrain.TractionBattery.CurrentVoltage": {
+         "namespace": "VehicleBus",
+         "name": "ID132HVBattAmpVolt.BattVoltage132"
+      },
+      "Vehicle.Powertrain.TractionBattery.Temperature.Min": {
+         "namespace": "VehicleBus",
+         "name": "ID312BMSthermal.BMSminPackTemperature"
+      },
+      "Vehicle.Powertrain.TractionBattery.Temperature.Max": {
+         "namespace": "VehicleBus",
+         "name": "ID312BMSthermal.BMSmaxPackTemperature"
+      },
+      "Vehicle.Powertrain.TractionBattery.CellVoltage.Min": {
+         "namespace": "VehicleBus",
+         "name": "ID332BattBrickMinMax.BattBrickVoltageMin332"
+      },
+      "Vehicle.Powertrain.TractionBattery.CellVoltage.Max": {
+         "namespace": "VehicleBus",
+         "name": "ID332BattBrickMinMax.BattBrickVoltageMax332"
+      },
+      "Vehicle.Cabin.HVAC.Station.Row1.Driver.Temperature": {
+         "namespace": "VehicleBus",
+         "name": "ID2F3UI_hvacRequest.UI_hvacReqTempSetpointLeft"
+      },
+      "Vehicle.Cabin.HVAC.Station.Row1.Passenger.Temperature": {
+         "namespace": "VehicleBus",
+         "name": "ID2F3UI_hvacRequest.UI_hvacReqTempSetpointRight"
+      },
+      "Vehicle.Cabin.HVAC.Station.Row1.Passenger.FanSpeed": {
+         "namespace": "VehicleBus",
+         "name": "ID282VCLEFT_hvacBlowerFeedback.VCLEFT_hvacBlowerOutputDuty"
+      },
+      "Vehicle.Body.Lights.High.IsOn": {
+         "namespace": "VehicleBus",
+         "name": "ID3F5VCFRONT_lighting.VCFRONT_highBeamSwitchActive"
+      },
+      "Vehicle.Chassis.Axle.Row1.Wheel.Left.Speed": {
+         "namespace": "ChassisBus",
+         "name": "ID175WheelSpeed.WheelSpeedFL175"
+      },
+      "Vehicle.Chassis.Axle.Row1.Wheel.Right.Speed": {
+         "namespace": "ChassisBus",
+         "name": "ID175WheelSpeed.WheelSpeedFR175"
+      },
+      "Vehicle.Chassis.Axle.Row2.Wheel.Left.Speed": {
+         "namespace": "ChassisBus",
+         "name": "ID175WheelSpeed.WheelSpeedRL175"
+      },
+      "Vehicle.Chassis.Axle.Row2.Wheel.Right.Speed": {
+         "namespace": "ChassisBus",
+         "name": "ID175WheelSpeed.WheelSpeedRR175"
+      },
+      "Vehicle.Powertrain.TractionBattery.Charging.ChargeLimit": {
+         "namespace": "VehicleBus",
+         "name": "ID333UI_chargeRequest.UI_chargeTerminationPct"
+      },
+      "Vehicle.Powertrain.TractionBattery.Charging.ChargeCurrent.DC": {
+         "namespace": "VehicleBus",
+         "name": "ID214FastChargeVA.FC_dcCurrent"
+      },
+      "Vehicle.Powertrain.TractionBattery.Charging.MaximumChargingCurrent.DC": {
+         "namespace": "VehicleBus",
+         "name": "ID541FastChargeMaxLimits.FCMaxCurrentLimit541"
+      },
+      "Vehicle.Powertrain.TractionBattery.Charging.MaximumChargingCurrent.AC": {
+         "namespace": "VehicleBus",
+         "name": "ID43DCP_chargeStatusLog.CP_acChargeCurrentLimit_log"
+      },
+      "Vehicle.Powertrain.TractionBattery.AccumulatedChargedEnergy": {
+         "namespace": "VehicleBus",
+         "name": "ID3D2TotalChargeDischarge.TotalChargeKWh3D2"
+      },
+      "Vehicle.Powertrain.TractionBattery.AccumulatedConsumedEnergy": {
+         "namespace": "VehicleBus",
+         "name": "ID3D2TotalChargeDischarge.TotalDischargeKWh3D2"
+      },
+      "Vehicle.CurrentLocation.Latitude": {
+         "namespace": "ChassisBus",
+         "name": "ID04FGPSLatLong.GPSLatitude04F"
+      },
+      "Vehicle.CurrentLocation.Longitude": {
+         "namespace": "ChassisBus",
+         "name": "ID04FGPSLatLong.GPSLongitude04F"
+      },
+      "Vehicle.CurrentLocation.Altitude": {
+         "namespace": "VehicleBus",
+         "name": "ID3D8Elevation.Elevation3D8"
+      },
+      "Vehicle.CurrentLocation.HorizontalAccuracy": {
+         "namespace": "ChassisBus",
+         "name": "ID04FGPSLatLong.GPSAccuracy04F"
+      }
+   }
+}

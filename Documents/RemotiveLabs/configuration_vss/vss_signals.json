@@ -1,0 +1,55 @@
+{
+   "description": "COVESA VSS mapping information",
+   "formatVersion": "0.1.0",
+   "scripts_location": "scripts",
+   "simple_mapping": {
+      "Vehicle.Powertrain.AccumulatedChargedEnergy": {
+         "namespace": "VehicleBus",
+         "name": "ID3D2TotalChargeDischarge.TotalChargeKWh3D2"
+      },
+      "Vehicle.Powertrain.AccumulatedConsumedEnergy": {
+         "namespace": "VehicleBus",
+         "name": "ID3D2TotalChargeDischarge.TotalDischargeKWh3D2"
+      },
+      "Vehicle.Exterior.AirTemperature": {
+         "namespace": "VehicleBus",
+         "name": "ID321VCFRONT_sensors.VCFRONT_tempAmbientFiltered"
+      },
+      "Vehicle.TraveledDistance": {
+         "namespace": "ChassisBus",
+         "name": "ID3F3UI_odo.UI_odometer"
+      },
+      "Vehicle.Speed": {
+         "namespace": "VehicleBus",
+         "name": "ID257DIspeed.DI_vehicleSpeed"
+      },
+      "Vehicle.Chassis.Accelerator.PedalPosition": {
+         "namespace": "VehicleBus",
+         "name": "ID118DriveSystemStatus.DI_accelPedalPos"
+      },
+      "Vehicle.Powertrain.Transmission.CurrentGear": {
+         "namespace": "VehicleBus",
+         "name": "ID118DriveSystemStatus.DI_gear"
+      },
+      "Vehicle.Powertrain.TractionBattery.NominalVoltage": {
+         "namespace" : "VehicleBus",
+         "name" : "ID352BMS_energyStatus.BMS_nominalFullPackEnergy"
+      },
+      "Vehicle.Powertrain.TractionBattery.StateOfCharge.CurrentEnergy" : {
+         "namespace" : "VehicleBus",
+         "name" : "ID352BMS_energyStatus.BMS_nominalEnergyRemaining"
+      },
+      "Vehicle.CurrentLocation.Longitude": {
+         "namespace": "ChassisBus",
+         "name": "ID04FGPSLatLong.GPSLongitude04F"
+      },
+      "Vehicle.CurrentLocation.Latitude": {
+         "namespace": "ChassisBus",
+         "name": "ID04FGPSLatLong.GPSLatitude04F"
+      },
+      "Vehicle.CurrentLocation.HorizontalAccuracy": {
+         "namespace": "ChassisBus",
+         "name": "ID04FGPSLatLong.GPSAccuracy04F"
+      }
+   }
+}

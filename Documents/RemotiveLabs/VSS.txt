@@ -1,0 +1,5783 @@
+Start of: \spec\VehicleSignalSpecification.vspec
+# Copyright (c) 2016 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# Root Vehicle Signal Specification file
+#
+# This top level vehicle specification file includes all other vspec
+# files into a complete specification that can be processed
+# by the tools available in https://github.com/COVESA/vss-tools
+#
+
+#
+# The vehicle branch for highlevel vehicle signals and attributes.
+#
+Vehicle:
+  type: branch
+  description: High-level vehicle data.
+
+# Include the Vehicle/Vehicle.vspec file and attach all its signals under the
+# Vehicle branch created above.
+
+#include Vehicle/Vehicle.vspec Vehicle
+
+
+#
+# The power train branch used to host the signals and attributes.
+#
+Vehicle.Powertrain:
+  type: branch
+  description: Powertrain data for battery management, etc.
+#include Powertrain/Powertrain.vspec Vehicle.Powertrain
+
+
+#
+# Internal combustion engine signals and attributes.
+#
+Vehicle.Powertrain.CombustionEngine:
+  type: branch
+  description: Engine-specific data, stopping at the bell housing.
+
+# Include the engine.vspec file and attach all its signals and attributes under the engine
+# branch created above.
+#include Powertrain/CombustionEngine.vspec Vehicle.Powertrain.CombustionEngine
+
+#
+# The transmission branch used to host the signals and attributes in transmission.vspec.
+#
+Vehicle.Powertrain.Transmission:
+  type: branch
+  description: Transmission-specific data, stopping at the drive shafts.
+
+# Include the transmission.vspec file and attach all its signals and attributes under the
+# transmission branch created above.
+#include Powertrain/Transmission.vspec Vehicle.Powertrain.Transmission
+
+
+#
+# The electric motor branch used to host the signals and attributes in ElectricMotor.vspec.
+#
+Vehicle.Powertrain.ElectricMotor:
+  type: branch
+  description: Electric Motor specific data.
+
+# Include the electric motor vspec file and attach all its signals and attributes under the
+# electric motor branch created above.
+#include Powertrain/ElectricMotor.vspec Vehicle.Powertrain.ElectricMotor
+
+
+#
+# The traction battery branch refers to signals and attributes related to the battery used by electrical
+# and hybrid vehicles for the electric motor.
+# It does not refer to signals and attributes related to the supply voltage battery used by
+# traditional vehicles with combustion engine
+#
+Vehicle.Powertrain.TractionBattery:
+  type: branch
+  description: Battery Management data.
+
+#include Powertrain/TractionBattery.vspec Vehicle.Powertrain.TractionBattery
+
+
+#
+# The fuels system signals and attributes used to host the signals in FuelSystem.vspec.
+#
+Vehicle.Powertrain.FuelSystem:
+  type: branch
+  description: Fuel system data.
+
+# Include the fuel system vspec file and attach all its signals and attributes under the
+# fuels system branch created above.
+#include Powertrain/FuelSystem.vspec Vehicle.Powertrain.FuelSystem
+
+
+
+#
+# The Body branch used to host the signals and attributes Body/Body.vspec.
+#
+Vehicle.Body:
+  type: branch
+  description: All body components.
+
+#include Body/Body.vspec Vehicle.Body
+
+
+#
+# The Cabin branch and its included signals and attributes from Cabin/Cabin.vspec
+#
+Vehicle.Cabin:
+  type: branch
+  description: All in-cabin components, including doors.
+
+
+# Include the Cabin/Cabin.vspec file and attach all its signals and attributes under the
+# Cabin branch created above.
+
+#include Cabin/Cabin.vspec Vehicle.Cabin
+
+
+#
+# Advanced Driver Assist Systems signals and attributes.
+#
+Vehicle.ADAS:
+  type: branch
+  description: All Advanced Driver Assist Systems data.
+
+#include ADAS/ADAS.vspec Vehicle.ADAS
+
+
+#
+# Chassis signals and attributes.
+# Includes steering, suspension, wheels, brakes, etc
+#
+Vehicle.Chassis:
+  type: branch
+  description: All data concerning steering, suspension, wheels, and brakes.
+
+#include Chassis/Chassis.vspec Vehicle.Chassis
+
+
+#
+# On-board Diagnostic (OBD) Branch
+#
+Vehicle.OBD:
+  type: branch
+  description: OBD data.
+
+# Include the OBD/OBD.vspec file and attach all its data under the
+# OBD branch created above.
+
+#include OBD/OBD.vspec Vehicle.OBD
+
+#
+# Driver
+#
+Vehicle.Driver:
+  type: branch
+  description: Driver data.
+
+# Include the Driver/Driver.vspec file and attach all its data under the
+# Driver branch created above and will include Occupant attributes
+
+#include Driver/Driver.vspec Vehicle.Driver
+
+#
+# Occupant Data
+#
+
+Vehicle.Occupant:
+  type: branch
+  instances:
+    - Row[1,2]
+    - ["DriverSide","Middle","PassengerSide"]
+  description: Occupant (Driver or Passenger) data.
+#include Vehicle/Occupant.vspec Vehicle.Occupant
+
+#
+# Exterior information
+#
+Vehicle.Exterior:
+  type: branch
+  description: Information about exterior measured by vehicle.
+
+#include Vehicle/Exterior.vspec Vehicle.Exterior
+
+#
+# Service information
+#
+Vehicle.Service:
+  type: branch
+  description: Service data.
+
+#include Vehicle/Service.vspec Vehicle.Service
+
+#
+# Connectivity information
+#
+Vehicle.Connectivity:
+  type: branch
+  description: Connectivity data.
+
+#include Vehicle/Connectivity.vspec Vehicle.Connectivity
+
+#include Vehicle/Diagnostics.vspec Vehicle
+End of: \spec\VehicleSignalSpecification.vspec
+Start of: \spec\ADAS\ADAS.vspec
+# Copyright (c) 2016 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# All Advanced Driver Assist System signals
+#
+# Three signals are commonly used to describe status of a system.
+#
+# For systems that only takes action under specific circumstances (like ABS) two signals are often used:
+# IsEnabled indicates that the system has been turned on, is monitoring and is ready to take action
+# IsEngaged indicates that the system is currently taking action (e.g. regulating brake pressure)
+#
+# For systems that are taking action over an longer period of time (like Cruise Control) two signals are often used:
+# IsEnabled indicates that the system is enabled and available for e.g. configuration, but it is not yet taking action.
+# IsActive indicates that the system has been turned on and is continuously taking action,
+# (e.g. regulating speed and brakes)
+#
+
+ActiveAutonomyLevel:
+  datatype: string
+  type: sensor
+  allowed: [
+    'SAE_0',
+    'SAE_1',
+    'SAE_2_DISENGAGING',
+    'SAE_2',
+    'SAE_3_DISENGAGING',
+    'SAE_3',
+    'SAE_4_DISENGAGING',
+    'SAE_4',
+    'SAE_5_DISENGAGING',
+    'SAE_5'
+  ]
+  description: Indicates the currently active level of driving automation according to
+               the SAE J3016 (Taxonomy and Definitions for Terms Related to Driving Automation Systems for On-Road Motor Vehicles).
+  comment: Complies with https://www.sae.org/standards/content/j3016_202104/ and https://www.sae.org/blog/sae-j3016-update.
+           Level 5 and 4 ADS (Automated driving system) disengage, if appropriate, only after it achieves a minimal risk condition or a driver is performing the DDT.
+           Level 3 ADS disengages either an appropriate time after issuing a request to intervene or immediately upon user request.
+           Level 2 DAS (Driving automation system) disengages immediately upon driver request.
+           However, since many Level 2 DAS, often termed "Level 2.5", warn the driver shortly before reaching their operational limits,
+           the VSS also supports the DISENGAGING state for SAE_2.
+           Nevertheless, it should be noted that the SAE J3016 states that it is incorrect to describe driving automation features using fractional levels.
+
+SupportedAutonomyLevel:
+  datatype: string
+  type: attribute
+  allowed: [
+    'SAE_0', # No Driving Automation
+    'SAE_1', # Driver Assistance
+    'SAE_2', # Partial Driving Automation
+    'SAE_3', # Conditional Driving Automation
+    'SAE_4', # High Driving Automation
+    'SAE_5'  # Full Driving Automation
+  ]
+  description: Indicates the highest level of driving automation according to the SAE J3016 taxonomy the vehicle is capable of.
+
+CruiseControl:
+  type: branch
+  description: Signals from Cruise Control system.
+
+CruiseControl.IsEnabled:
+  datatype: boolean
+  type: actuator
+  description: Indicates if cruise control system is enabled (e.g. ready to receive configurations and settings)
+               True = Enabled. False = Disabled.
+
+CruiseControl.IsActive:
+  datatype: boolean
+  type: actuator
+  description: Indicates if cruise control system is active (i.e. actively controls speed).
+               True = Active. False = Inactive.
+
+CruiseControl.SpeedSet:
+  datatype: float
+  type: actuator
+  unit: km/h
+  description: Set cruise control speed in kilometers per hour.
+
+CruiseControl.IsError:
+  datatype: boolean
+  type: sensor
+  description: Indicates if cruise control system incurred an error condition. True = Error. False = No Error.
+
+#
+# Lane Departure Detection System
+#
+LaneDepartureDetection:
+  type: branch
+  description: Signals from Lane Departure Detection System.
+
+LaneDepartureDetection.IsEnabled:
+  datatype: boolean
+  type: actuator
+  description: Indicates if lane departure detection system is enabled. True = Enabled. False = Disabled.
+
+LaneDepartureDetection.IsWarning:
+  datatype: boolean
+  type: sensor
+  description: Indicates if lane departure detection registered a lane departure.
+
+LaneDepartureDetection.IsError:
+  datatype: boolean
+  type: sensor
+  description: Indicates if lane departure system incurred an error condition. True = Error. False = No Error.
+
+#
+# Obstacle Sensor System
+#
+ObstacleDetection:
+  type: branch
+  description: Signals form Obstacle Sensor System.
+
+ObstacleDetection.IsEnabled:
+  datatype: boolean
+  type: actuator
+  description: Indicates if obstacle sensor system is enabled (i.e. monitoring for obstacles).
+               True = Enabled. False = Disabled.
+
+ObstacleDetection.IsWarning:
+  datatype: boolean
+  type: sensor
+  description: Indicates if obstacle sensor system registered an obstacle.
+
+ObstacleDetection.IsError:
+  datatype: boolean
+  type: sensor
+  description: Indicates if obstacle sensor system incurred an error condition. True = Error. False = No Error.
+
+
+#
+# Antilock Braking System
+#
+ABS:
+  type: branch
+  description: Antilock Braking System signals.
+
+ABS.IsEnabled:
+  datatype: boolean
+  type: actuator
+  description: Indicates if ABS is enabled. True = Enabled. False = Disabled.
+
+ABS.IsError:
+  datatype: boolean
+  type: sensor
+  description: Indicates if ABS incurred an error condition. True = Error. False = No Error.
+
+ABS.IsEngaged:
+  datatype: boolean
+  type: sensor
+  description: Indicates if ABS is currently regulating brake pressure. True = Engaged. False = Not Engaged.
+
+
+#
+# Traction Control System
+#
+TCS:
+  type: branch
+  description: Traction Control System signals.
+
+TCS.IsEnabled:
+  datatype: boolean
+  type: actuator
+  description: Indicates if TCS is enabled. True = Enabled. False = Disabled.
+
+TCS.IsError:
+  datatype: boolean
+  type: sensor
+  description: Indicates if TCS incurred an error condition. True = Error. False = No Error.
+
+TCS.IsEngaged:
+  datatype: boolean
+  type: sensor
+  description: Indicates if TCS is currently regulating traction. True = Engaged. False = Not Engaged.
+
+
+#
+# Electronic Stability Control System
+#
+ESC:
+  type: branch
+  description: Electronic Stability Control System signals.
+
+ESC.IsEnabled:
+  datatype: boolean
+  type: actuator
+  description: Indicates if ESC is enabled. True = Enabled. False = Disabled.
+
+ESC.IsError:
+  datatype: boolean
+  type: sensor
+  description: Indicates if ESC incurred an error condition. True = Error. False = No Error.
+
+ESC.IsEngaged:
+  datatype: boolean
+  type: sensor
+  description: Indicates if ESC is currently regulating vehicle stability. True = Engaged. False = Not Engaged.
+
+ESC.IsStrongCrossWindDetected:
+  datatype: boolean
+  type: sensor
+  description: Indicates if the ESC system is detecting strong cross winds.
+               True = Strong cross winds detected. False = No strong cross winds detected.
+
+ESC.RoadFriction:
+  type: branch
+  description: Road friction values reported by the ESC system.
+
+ESC.RoadFriction.MostProbable:
+  datatype: float
+  type: sensor
+  unit: percent
+  min: 0
+  max: 100
+  description: Most probable road friction, as calculated by the ESC system.
+               Exact meaning of most probable is implementation specific.
+               0 = no friction, 100 = maximum friction.
+
+ESC.RoadFriction.LowerBound:
+  datatype: float
+  type: sensor
+  unit: percent
+  min: 0
+  max: 100
+  description: Lower bound road friction, as calculated by the ESC system.
+               5% possibility that road friction is below this value.
+               0 = no friction, 100 = maximum friction.
+
+ESC.RoadFriction.UpperBound:
+  datatype: float
+  type: sensor
+  unit: percent
+  min: 0
+  max: 100
+  description: Upper bound road friction, as calculated by the ESC system.
+               95% possibility that road friction is below this value.
+               0 = no friction, 100 = maximum friction.
+
+#
+# Electronic Brakeforce Distribution (EBD)
+#
+EBD:
+  type: branch
+  description: Electronic Brakeforce Distribution (EBD) System signals.
+
+EBD.IsEnabled:
+  datatype: boolean
+  type: actuator
+  description: Indicates if EBD is enabled. True = Enabled. False = Disabled.
+
+EBD.IsError:
+  datatype: boolean
+  type: sensor
+  description: Indicates if EBD incurred an error condition. True = Error. False = No Error.
+
+EBD.IsEngaged:
+  datatype: boolean
+  type: sensor
+  description: Indicates if EBD is currently regulating vehicle brakeforce distribution.
+               True = Engaged. False = Not Engaged.
+
+#
+# Emergency Brake Assist (EBA)
+#
+EBA:
+  type: branch
+  description: Emergency Brake Assist (EBA) System signals.
+
+EBA.IsEnabled:
+  datatype: boolean
+  type: actuator
+  description: Indicates if EBA is enabled. True = Enabled. False = Disabled.
+
+EBA.IsError:
+  datatype: boolean
+  type: sensor
+  description: Indicates if EBA incurred an error condition. True = Error. False = No Error.
+
+EBA.IsEngaged:
+  datatype: boolean
+  type: sensor
+  description: Indicates if EBA is currently regulating brake pressure. True = Engaged. False = Not Engaged.
+
+#
+# Driver Monitoring System (DMS)
+#
+DMS:
+  type: branch
+  description: Driver Monitoring System signals.
+
+DMS.IsEnabled:
+  datatype: boolean
+  type: actuator
+  description: Indicates if DMS is enabled. True = Enabled. False = Disabled.
+
+DMS.IsWarning:
+  datatype: boolean
+  type: sensor
+  description: Indicates if DMS has registered a driver alert condition.
+
+DMS.IsError:
+  datatype: boolean
+  type: sensor
+  description: Indicates if DMS incurred an error condition. True = Error. False = No Error.
+
+#include include/PowerOptimize.vspec
+End of: \spec\ADAS\ADAS.vspec
+Start of: \spec\Body\Body.vspec
+# Copyright (c) 2016 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# All body signals and attributes.
+#
+
+BodyType:
+  datatype: string
+  type: attribute
+  description: Body type code as defined by ISO 3779.
+
+RefuelPosition:
+  deprecation: v4.1 replaced with Vehicle.Powertrain.TractionBattery.Charging.ChargePortPosition
+               and Vehicle.Powertrain.FuelSystem.RefuelPortPosition
+  datatype: string
+  type: attribute
+  allowed: ['FRONT_LEFT', 'FRONT_RIGHT', 'MIDDLE_LEFT', 'MIDDLE_RIGHT', 'REAR_LEFT', 'REAR_RIGHT']
+  description: Location of the fuel cap or charge port.
+
+#
+# Hood description
+#
+Hood:
+  type: branch
+  description: Hood status. Start position for Hood is Closed.
+  comment: The hood is the hinged cover over the engine compartment of a motor vehicles.
+           Depending on vehicle, it can be either in the front or back of the vehicle.
+           Luggage compartments are in VSS called trunks, even if they are located at the front of the vehicle.
+
+#include ../include/MovableItem.vspec Hood
+
+#
+# Trunk description
+#
+Trunk:
+  type: branch
+  instances: ["Front", "Rear"]
+  description: Trunk status. Start position for Trunk is Closed.
+  comment: A trunk is a luggage compartment in a vehicle.
+           Depending on vehicle, it can be either in the front or back of the vehicle.
+           Some vehicles may have trunks both at the front and at the rear of the vehicle.
+
+#include ../include/LockableMovableItem.vspec Trunk
+
+Trunk.IsLightOn:
+  datatype: boolean
+  type: actuator
+  description: Is trunk light on
+  comment: V4.0 Moved from Vehicle.Cabin.Lights.IsTrunkOn because Trunk is not defined as part of the Cabin.
+
+
+#
+# Horn description
+#
+Horn:
+  type: branch
+  description: Horn signals.
+
+Horn.IsActive:
+  datatype: boolean
+  type: actuator
+  description: Horn active or inactive. True = Active. False = Inactive.
+
+
+#
+# Raindetection description
+#
+Raindetection:
+  type: branch
+  description: Rain sensor signals.
+
+Raindetection.Intensity:
+  datatype: uint8
+  type: sensor
+  unit: percent
+  max: 100
+  description: Rain intensity. 0 = Dry, No Rain. 100 = Covered.
+
+
+#
+# Windshields description
+#
+Windshield:
+  type: branch
+  instances: ["Front", "Rear"]
+  description: Windshield signals.
+
+Windshield.Wiping:
+  type: branch
+  description: Windshield wiper signals.
+
+Windshield.Wiping.Mode:
+  datatype: string
+  type: actuator
+  allowed: ['OFF', 'SLOW', 'MEDIUM', 'FAST', 'INTERVAL', 'RAIN_SENSOR']
+  description: Wiper mode requested by user/driver.
+               INTERVAL indicates intermittent wiping, with fixed time interval between each wipe.
+               RAIN_SENSOR indicates intermittent wiping based on rain intensity.
+
+Windshield.Wiping.Intensity:
+  datatype: uint8
+  type: actuator
+  description: Relative intensity/sensitivity for interval and rain sensor mode as requested by user/driver.
+               Has no significance if Windshield.Wiping.Mode is OFF/SLOW/MEDIUM/FAST
+               0 - wipers inactive.
+               1 - minimum intensity (lowest frequency/sensitivity, longest interval).
+               2/3/4/... - higher intensity (higher frequency/sensitivity, shorter interval).
+               Maximum value supported is vehicle specific.
+
+Windshield.Wiping.System:
+  type: branch
+  description: Signals to control behavior of wipers in detail.
+               By default VSS expects only one instance.
+  comment:     These signals are typically not directly available to the user/driver of the vehicle.
+               The overlay in overlays/extensions/dual_wiper_systems.vspec can be used to modify this branch
+               to support two instances; Primary and Secondary.
+
+#include WiperSystem.vspec Windshield.Wiping.System
+
+Windshield.Wiping.WiperWear:
+  datatype: uint8
+  type: sensor
+  unit: percent
+  max: 100
+  description: Wiper wear as percent.
+               0 = No Wear.
+               100 = Worn. Replacement required.
+               Method for calculating or estimating wiper wear is vehicle specific.
+               For windshields with multiple wipers the wear reported shall correspond to the most worn wiper.
+
+Windshield.Wiping.IsWipersWorn:
+  datatype: boolean
+  type: sensor
+  description: Wiper wear status. True = Worn, Replacement recommended or required. False = Not Worn.
+
+Windshield.IsHeatingOn:
+  datatype: boolean
+  type: actuator
+  description: Windshield heater status. False - off, True - on.
+
+Windshield.WasherFluid:
+  type: branch
+  description: Windshield washer fluid signals
+
+Windshield.WasherFluid.IsLevelLow:
+  datatype: boolean
+  type: sensor
+  description: Low level indication for washer fluid. True = Level Low. False = Level OK.
+
+Windshield.WasherFluid.Level:
+  datatype: uint8
+  unit: percent
+  max: 100
+  type: sensor
+  description: Washer fluid level as a percent. 0 = Empty. 100 = Full.
+
+##
+#  Lights definition
+##
+Lights:
+  type: branch
+  description: Exterior lights.
+
+Lights.LightSwitch:
+  datatype: string
+  type: actuator
+  allowed: ['OFF', 'POSITION', 'DAYTIME_RUNNING_LIGHTS', 'AUTO', 'BEAM']
+  description: Status of the vehicle main light switch.
+  comment: A vehicle typically does not support all alternatives.
+           Which lights that actually are lit may vary according to vehicle configuration and local legislation.
+           OFF is typically indicated by 0.
+           POSITION is typically indicated by ISO 7000 symbol 0456.
+           DAYTIME_RUNNING_LIGHTS (DRL) can be indicated by ISO 7000 symbol 2611.
+           AUTO indicates that vehicle automatically selects suitable lights.
+           BEAM is typically indicated by ISO 7000 symbol 0083.
+
+Lights.IsHighBeamSwitchOn:
+  datatype: boolean
+  type: actuator
+  description: Status of the high beam switch. True = high beam enabled. False = high beam not enabled.
+  comment: This signal indicates the status of the switch and does not indicate if low or high beam actually are on.
+           That typically depends on vehicle logic and other signals like Lights.LightSwitch and Vehicle.LowVoltageSystemState.
+
+Lights.Beam:
+  type: branch
+  instances: ["Low","High"]
+  description: Beam lights.
+#include StaticLights.vspec Lights.Beam
+
+Lights.Running:
+  type: branch
+  description: Daytime running lights (DRL).
+#include StaticLights.vspec Lights.Running
+
+Lights.Backup:
+  type: branch
+  description: Backup lights.
+#include StaticLights.vspec Lights.Backup
+
+Lights.Parking:
+  type: branch
+  description: Parking lights.
+#include StaticLights.vspec Lights.Parking
+
+Lights.Fog:
+  type: branch
+  instances: ["Rear","Front"]
+  description: Fog lights.
+#include StaticLights.vspec Lights.Fog
+
+Lights.LicensePlate:
+  type: branch
+  description: License plate lights.
+#include StaticLights.vspec Lights.LicensePlate
+
+Lights.Brake:
+  type: branch
+  description: Brake lights.
+#include BrakeLights.vspec Lights.Brake
+
+Lights.Hazard:
+  type: branch
+  description: Hazard lights.
+#include SignalingLights.vspec Lights.Hazard
+
+Lights.DirectionIndicator:
+  type: branch
+  instances: ["Left","Right"]
+  description: Indicator lights.
+#include SignalingLights.vspec Lights.DirectionIndicator
+
+##
+#  Mirrors definition
+##
+Mirrors:
+  type: branch
+  instances: ["DriverSide", "PassengerSide"]
+  description: All mirrors.
+# Include mirrors specification and attach it to the Mirrors branch
+#include ExteriorMirrors.vspec Mirrors
+
+##
+# Spoilers
+##
+
+RearMainSpoilerPosition:
+  datatype: float
+  unit: percent
+  type: actuator
+  min: 0
+  max: 100
+  description: Rear spoiler position, 0% = Spoiler fully stowed. 100% = Spoiler fully exposed.
+
+#include include/PowerOptimize.vspec
+End of: \spec\Body\Body.vspec
+Start of: \spec\Body\BrakeLights.vspec
+# Copyright (c) 2022 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+IsActive:
+  datatype: string
+  type: actuator
+  allowed: ['INACTIVE', 'ACTIVE', 'ADAPTIVE']
+  description: Indicates if break-light is active. INACTIVE means lights are off. ACTIVE means lights are on. ADAPTIVE means that break-light is indicating emergency-breaking.
+
+IsDefect:
+  datatype: boolean
+  type: sensor
+  description: Indicates if light is defect. True = Light is defect. False = Light has no defect.
+End of: \spec\Body\BrakeLights.vspec
+Start of: \spec\Body\ExteriorMirrors.vspec
+# Copyright (c) 2016 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# All exterior mirrors
+#
+
+Tilt:
+  datatype: int8
+  unit: percent
+  min: -100
+  max: 100
+  type: actuator
+  description: Mirror tilt as a percent. 0 = Center Position. 100 = Fully Upward Position. -100 = Fully Downward Position.
+
+Pan:
+  datatype: int8
+  type: actuator
+  unit: percent
+  min: -100
+  max: 100
+  description: Mirror pan as a percent. 0 = Center Position. 100 = Fully Left Position. -100 = Fully Right Position.
+
+IsHeatingOn:
+  datatype: boolean
+  type: actuator
+  description: Mirror Heater on or off. True = Heater On. False = Heater Off.
+
+IsLocked:
+  datatype: boolean
+  type: actuator
+  description: Is mirror movement locked? True = Locked, mirror will not react to Tilt/Pan change. False = Unlocked.
+
+IsFolded:
+  datatype: boolean
+  type: actuator
+  description: Is mirror folded? True = Fully or partially folded. False = Fully unfolded.
+End of: \spec\Body\ExteriorMirrors.vspec
+Start of: \spec\Body\SignalingLights.vspec
+# Copyright (c) 2022 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+IsSignaling:
+  datatype: boolean
+  type: actuator
+  description: Indicates if light is signaling or off. True = signaling. False = Off.
+
+IsDefect:
+  datatype: boolean
+  type: sensor
+  description: Indicates if light is defect. True = Light is defect. False = Light has no defect.
+End of: \spec\Body\SignalingLights.vspec
+Start of: \spec\Body\StaticLights.vspec
+# Copyright (c) 2022 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+IsOn:
+  datatype: boolean
+  type: actuator
+  description: Indicates if light is on or off. True = On. False = Off.
+
+IsDefect:
+  datatype: boolean
+  type: sensor
+  description: Indicates if light is defect. True = Light is defect. False = Light has no defect.
+End of: \spec\Body\StaticLights.vspec
+Start of: \spec\Body\WiperSystem.vspec
+# Copyright (c) 2022 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+# This file describes signals for a wiper system interface, allowing movement for one or more wipers
+# to be controlled in great detail.
+#
+#
+# Wiping of windshields is performed by wiper systems.
+# A windshield with wipers might be served by one or more wiper systems.
+# Each wiper system may control one more wipers.
+# This means that it is not possible to deduce how many wiper systems a windshield has
+# just by counting number of wipers serving the windowshield.
+#
+# Examples:
+# - A traditional passenger vehicle typically only has 1 wiper system (drive) for front windshield,
+#   serving two mechanically connected wiper blades.
+# - Some vehicles have two wiper systems / drives (primary and secondary) for front windshield,
+#   serving two electronically connected wiper blades.
+#
+# For now VSS by default only support a single instance of wipersystem.
+# If a vehicle needs to support two wiper systems for a window it shall preferably by handld by a layer extension
+# specifying that two instances exist, as shown below:
+#
+# Windshield.Wiping.System:
+#   type: branch
+#  instances: [Primary, Secondary]
+#  description: Signals to control behavior of wipers in detail.
+#
+#
+# Short description of wiper system behavior:
+#
+# Wiper movement is controlled by the actuators Mode, Frequency and TargetPosition.
+# Wiper movement is started by setting Mode to WIPE and specifying Frequency and TargetPosition.
+# If required TargetPosition is within supported range wipers will start moving to TargetPosition (e.g. go to higher reversing position).
+# To continue the wiper movement or to trigger continuous wiping,
+# a new TargetPosition (e.g. the lower reversing position) shall be requested as soon as IsEndingWipeCycle->True.
+# As long as IsEndingWipeCycle=False, an onging TargetPosition may be changed / corrected
+# By setting Mode to STOP_HOLD, the wiper will stop as soon as the ongoing TargetPosition is reached.
+# For wiper system with one wiper drive and two blades, then TargetPosition may refer to the position of the blade on driver side.
+# Additional modes exist for special situations.
+
+
+Mode:
+  datatype: string
+  type: actuator
+  allowed: ['STOP_HOLD', 'WIPE', 'PLANT_MODE', 'EMERGENCY_STOP']
+  description: Requested mode of wiper system.
+               STOP_HOLD means that the wipers shall move to position given by TargetPosition and then hold the position.
+               WIPE means that wipers shall move to the position given by TargetPosition and then hold the position
+               if no new TargetPosition is requested.
+               PLANT_MODE means that wiping is disabled. Exact behavior is vehicle specific.
+               EMERGENCY_STOP means that wiping shall be immediately stopped without holding the position.
+
+Frequency:
+  datatype: uint8
+  unit: cpm
+  type: actuator
+  description: Wiping frequency/speed, measured in cycles per minute.
+               The signal concerns the actual speed of the wiper blades when moving.
+               Intervals/pauses are excluded, i.e. the value corresponds to the number of cycles
+               that would be completed in 1 minute if wiping permanently over default range.
+  comment:     Examples - 0 = Wipers stopped, 80 = Wipers doing 80 cycles per minute (in WIPE mode).
+
+TargetPosition:
+  datatype: float
+  unit: degrees
+  type: actuator
+  description: Requested position of main wiper blade for the wiper system relative to reference position.
+               Location of reference position (0 degrees) and direction of positive/negative degrees is vehicle specific.
+               System behavior when receiving TargetPosition depends on Mode and IsEndingWipeCycle.
+               Supported values are vehicle specific and might be dynamically corrected.
+               If IsEndingWipeCycle=True then wipers will complete current movement before actuating new TargetPosition.
+               If IsEndingWipeCycle=False then wipers will directly change destination if the TargetPosition is changed.
+  comment:     Default parking position might be used as reference position.
+
+ActualPosition:
+  datatype: float
+  unit: degrees
+  type: actuator
+  description: Actual position of main wiper blade for the wiper system relative to reference position.
+               Location of reference position (0 degrees) and direction of positive/negative degrees is vehicle specific.
+  comment:     Default parking position might be used as reference position.
+
+DriveCurrent:
+  datatype: float
+  unit: A
+  type: sensor
+  description: Actual current used by wiper drive.
+  comment: May be negative in special situations.
+
+IsWiping:
+  datatype: boolean
+  type: sensor
+  description: Indicates wiper movement. True if wiper blades are moving.
+               Change of direction shall be considered as IsWiping if wipers will continue to move
+               directly after the change of direction.
+
+IsEndingWipeCycle:
+  datatype: boolean
+  type: sensor
+  description: Indicates if current wipe movement is completed or near completion.
+               True = Movement is completed or near completion. Changes to RequestedPosition will be executed
+               first after reaching previous RequestedPosition, if it has not already been reached.
+               False = Movement is not near completion. Any change to RequestedPosition will be
+               executed immediately. Change of direction may not be allowed.
+  comment:     In continuous wiping between A and B this sensor can be used a trigger to update TargetPosition.
+
+IsWiperError:
+  datatype: boolean
+  type: sensor
+  description: Indicates system failure. True if wiping is disabled due to system failure.
+
+IsPositionReached:
+  datatype: boolean
+  type: sensor
+  description: Indicates if a requested position has been reached.
+               IsPositionReached refers to the previous position in case the
+               TargetPosition is updated while IsEndingWipeCycle=True.
+               True = Current or Previous TargetPosition reached.
+               False = Position not (yet) reached, or wipers have moved away from the reached position.
+
+IsBlocked:
+  datatype: boolean
+  type: sensor
+  description: Indicates if wiper movement is blocked. True = Movement blocked. False = Movement not blocked.
+
+IsOverheated:
+  datatype: boolean
+  type: sensor
+  description: Indicates if wiper system is overheated.
+               True = Wiper system overheated. False = Wiper system not overheated.
+End of: \spec\Body\WiperSystem.vspec
+Start of: \spec\Cabin\Cabin.vspec
+# Copyright (c) 2016 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# All in-cabin originated signals and attributes
+#
+
+##
+# Rear window shade signals
+##
+RearShade:
+  type: branch
+  description: Rear window shade. Open = Retracted, Closed = Deployed.
+               Start position for RearShade is Open/Retracted.
+
+# Include the same shade spec used for sunroof and side windows.
+#include ../include/MovableItem.vspec RearShade
+
+##
+# HVAC signals
+##
+HVAC:
+  type: branch
+  description: Climate control
+#include HVAC.vspec HVAC
+
+##
+# Infotainment
+##
+Infotainment:
+  type: branch
+  description: Infotainment system.
+
+
+#include Infotainment.vspec Infotainment
+
+##
+# Sunroof status
+##
+Sunroof:
+  type: branch
+  description: Sun roof status.
+
+Sunroof.Position:
+  datatype: int8
+  type: sensor
+  unit: percent
+  min: -100
+  max: 100
+  description: Sunroof position. 0 = Fully closed 100 = Fully opened. -100 = Fully tilted.
+
+#
+# Sunroof controlling switch.
+# We cannot use SingleSliderSwitch.vspec since we have TiltUp and TiltDown also
+Sunroof.Switch:
+  datatype: string
+  type: actuator
+  allowed: ['INACTIVE', 'CLOSE', 'OPEN', 'ONE_SHOT_CLOSE', 'ONE_SHOT_OPEN', 'TILT_UP', 'TILT_DOWN']
+  description: Switch controlling sliding action such as window, sunroof, or shade.
+
+Sunroof.Shade:
+  type: branch
+  description: Sun roof shade status. Open = Retracted, Closed = Deployed.
+               Start position for Sunroof.Shade is Open/Retracted.
+
+# Include shade specification also used by side and rear window.
+#include ../include/MovableItem.vspec Sunroof.Shade
+
+#
+# Rear-view mirror signals
+#
+RearviewMirror:
+  type: branch
+  description: Rear-view mirror.
+
+RearviewMirror.DimmingLevel:
+  datatype: uint8
+  type: actuator
+  unit: percent
+  max: 100
+  description: Dimming level of rear-view mirror. 0 = Undimmed. 100 = Fully dimmed.
+
+
+##
+# Interior lights signals and sensors
+##
+Light:
+  type: branch
+  description: Light that is part of the Cabin.
+  comment: V4.0 branch renamed from "Lights" to "Light" to comply with singular naming of entities. Use SingleConfigurableLight.vspec to describe interior lights that can be configured.
+#include InteriorLights.vspec Light
+
+
+##
+# Door signals and attributes
+# The default VSS (i.e. this file) assumes a vehicle with two rows of doors
+# with two doors in front row and two doors in second row.
+# For real deployments this needs to be overridden with actual values
+# Row1 is the frontmost row.
+# Row2-RowX are subsequent rows of doors.
+#
+# Note that rear door (for hatchback and station wagons) shall typically not be represented
+# as a door, but rather be represented as a trunk (Vehicle.Body.Trunk) and
+# rear shade (Vehicle.Cabin.RearShade)
+##
+Door:
+  type: branch
+  instances:
+    - Row[1,2]
+    - ["DriverSide","PassengerSide"]
+  description: All doors, including windows and switches.
+#include SingleDoor.vspec Door
+
+# Default value based on instance declaration above with 2 rows and 2 doors in each row.
+DoorCount:
+  datatype: uint8
+  type: attribute
+  default: 4
+  description: Number of doors in vehicle.
+
+
+IsWindowChildLockEngaged:
+  datatype: boolean
+  type: actuator
+  description: Is window child lock engaged. True = Engaged. False = Disengaged.
+  comment: Window child lock refers to the functionality to disable the move window button next to most windows,
+           so that they only can be operated by the driver.
+
+##
+# Seat signals and attributes
+# The default VSS (i.e. this file) assumes a vehicle with two rows of seats
+# with two seats in front row and three seats in second row.
+# For real deployments this needs to be overridden with actual values
+# Row1 is the frontmost row.
+# Row2-RowX are subsequent rows of seats.
+#
+# Which seats that actually exist can be defined by SeatPosCount
+##
+
+Seat:
+  type: branch
+  instances:
+    - Row[1,2]
+    - ["DriverSide","Middle","PassengerSide"]
+  description: All seats.
+#include Seat.vspec Seat
+
+#
+# Seat attributes.
+#
+DriverPosition:
+  datatype: string
+  type: attribute
+  allowed: ['LEFT', 'MIDDLE', 'RIGHT']
+  description: The position of the driver seat in row 1.
+  comment: Some signals use DriverSide and PassengerSide as instances. If this signal specifies that DriverPosition is LEFT or MIDDLE, then DriverSide refers to left side and PassengerSide to right side. If this signal specifies that DriverPosition is RIGHT, then DriverSide refers to right side and PassengerSide to left side.
+
+SeatRowCount:
+  datatype: uint8
+  type: attribute
+  default: 2
+  description: Number of seat rows in vehicle.
+  comment: Default value corresponds to two rows of seats.
+
+
+SeatPosCount:
+  datatype: uint8[]
+  type: attribute
+  default: [2, 3]
+  description: Number of seats across each row from the front to the rear.
+  comment: Default value corresponds to two seats in front row and 3 seats in second row.
+
+##
+# Convertible roof status
+##
+Convertible:
+  type: branch
+  description: Convertible roof.
+
+Convertible.Status:
+  datatype: string
+  type: sensor
+  allowed: ['UNDEFINED', 'CLOSED', 'OPEN', 'CLOSING', 'OPENING', 'STALLED']
+  description: Roof status on convertible vehicles.
+
+#include include/PowerOptimize.vspec
+End of: \spec\Cabin\Cabin.vspec
+Start of: \spec\Cabin\HVAC.vspec
+# Copyright (c) 2016 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# All HVAC-originated signals
+#
+
+Station:
+  type: branch
+  instances:
+    - Row[1,4]
+    - ["Driver","Passenger"]
+  description: HVAC for single station in the vehicle
+#include SingleHVACStation.vspec Station
+
+IsRecirculationActive:
+  datatype: boolean
+  type: actuator
+  description: Is recirculation active.
+
+IsFrontDefrosterActive:
+  datatype: boolean
+  type: actuator
+  description: Is front defroster active.
+
+IsRearDefrosterActive:
+  datatype: boolean
+  type: actuator
+  description: Is rear defroster active.
+
+IsAirConditioningActive:
+  datatype: boolean
+  type: actuator
+  description: Is Air conditioning active.
+
+AmbientAirTemperature:
+  datatype: float
+  type: sensor
+  unit: celsius
+  description: Ambient air temperature inside the vehicle.
+
+#include include/PowerOptimize.vspec
+End of: \spec\Cabin\HVAC.vspec
+Start of: \spec\Cabin\Infotainment.vspec
+# Copyright (c) 2016 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# In-Vehicle Infotainment Signals
+#
+Media:
+  type: branch
+  description: All Media actions
+
+Media.Action:
+  datatype: string
+  type: actuator
+  allowed: ['UNKNOWN', 'STOP', 'PLAY', 'FAST_FORWARD', 'FAST_BACKWARD', 'SKIP_FORWARD', 'SKIP_BACKWARD']
+  description: Tells if the media was
+
+Media.Played:
+  type: branch
+  description: Collection of signals updated in concert when a new media is played
+
+Media.Played.Source:
+  datatype: string
+  type: actuator
+  allowed: ['UNKNOWN', 'SIRIUS_XM', 'AM', 'FM', 'DAB', 'TV', 'CD', 'DVD', 'AUX', 'USB', 'DISK', 'BLUETOOTH', 'INTERNET', 'VOICE', 'BEEP']
+  description: Media selected for playback
+
+Media.Played.Artist:
+  datatype: string
+  type: sensor
+  description: Name of artist being played
+
+Media.Played.Album:
+  datatype: string
+  type: sensor
+  description: Name of album being played
+
+Media.Played.Track:
+  datatype: string
+  type: sensor
+  description: Name of track being played
+
+Media.Played.URI:
+  datatype: string
+  type: sensor
+  description: User Resource associated with the media
+
+Media.Played.PlaybackRate:
+  datatype: float
+  type: actuator
+  description: Current playback rate of media being played.
+  comment: The normal playback rate is multiplied by this value to obtain the current rate, so a value of 1.0 indicates normal speed.
+           Values of lower than 1.0 make the media play slower than normal.
+           Values of higher than 1.0 make the media play faster than normal.
+
+Media.DeclinedURI:
+  datatype: string
+  type: sensor
+  description: URI of suggested media that was declined
+
+Media.SelectedURI:
+  datatype: string
+  type: actuator
+  description: URI of suggested media that was selected
+
+Media.Volume:
+  datatype: uint8
+  type: actuator
+  min: 0
+  max: 100
+  unit: percent
+  description: Current Media Volume
+
+Navigation:
+  type: branch
+  description: All navigation actions
+
+Navigation.DestinationSet:
+  type: branch
+  description: A navigation has been selected.
+
+Navigation.DestinationSet.Latitude:
+  datatype: double
+  type: actuator
+  min: -90
+  max: 90
+  unit: degrees
+  description: Latitude of destination in WGS 84 geodetic coordinates.
+
+Navigation.DestinationSet.Longitude:
+  datatype: double
+  type: actuator
+  min: -180
+  max: 180
+  unit: degrees
+  description: Longitude of destination in WGS 84 geodetic coordinates.
+
+Navigation.Mute:
+  datatype: string
+  type: actuator
+  allowed: ['MUTED', 'ALERT_ONLY', 'UNMUTED']
+  description: Navigation mute state that was selected.
+
+Navigation.Volume:
+  datatype: uint8
+  type: actuator
+  min: 0
+  max: 100
+  unit: percent
+  description: Current navigation volume
+
+Navigation.GuidanceVoice:
+  datatype: string
+  type: actuator
+  allowed: ['STANDARD_MALE', 'STANDARD_FEMALE', 'ETC']
+  description: Navigation guidance state that was selected.
+  comment: ETC indicates a voice alternative not covered by the explicitly listed alternatives.
+
+Navigation.Map:
+  type: branch
+  description: All map actions
+
+Navigation.Map.IsAutoScaleModeUsed:
+  datatype: boolean
+  type: actuator
+  description: Used to select auto-scaling mode. This feature dynamically adjusts the zoom level of the map to provide an optimal view based on the current speed of the vehicle
+  comment: If true, then auto-scaling mode is used.
+           If false, then manual-scaling mode is used.
+
+HMI:
+  type: branch
+  description: HMI related signals
+
+HMI.CurrentLanguage:
+  datatype: string
+  type: sensor
+  description: ISO 639-1 standard language code for the current HMI
+
+HMI.FontSize:
+  datatype: string
+  type: actuator
+  allowed: ['STANDARD', 'LARGE', 'EXTRA_LARGE']
+  description: Font size used in the current HMI
+
+HMI.DateFormat:
+  datatype: string
+  type: actuator
+  allowed: ['YYYY_MM_DD', 'DD_MM_YYYY', 'MM_DD_YYYY', 'YY_MM_DD', 'DD_MM_YY', 'MM_DD_YY']
+  description: Date format used in the current HMI
+
+HMI.TimeFormat:
+  datatype: string
+  type: actuator
+  allowed: ['HR_12', 'HR_24']
+  description: Time format used in the current HMI
+
+HMI.DistanceUnit:
+  datatype: string
+  type: actuator
+  allowed: ['MILES', 'KILOMETERS']
+  description: Distance unit used in the current HMI
+
+HMI.FuelVolumeUnit:
+  datatype: string
+  type: actuator
+  allowed: ['LITER', 'GALLON_US', 'GALLON_UK']
+  description: Fuel volume unit used in the current HMI
+
+HMI.FuelEconomyUnits:
+  datatype: string
+  type: actuator
+  allowed: ['MPG_UK', 'MPG_US', 'MILES_PER_LITER', 'KILOMETERS_PER_LITER', 'LITERS_PER_100_KILOMETERS']
+  description: Fuel economy unit used in the current HMI
+
+HMI.EVEconomyUnits:
+  datatype: string
+  type: actuator
+  allowed: ['MILES_PER_KILOWATT_HOUR', 'KILOMETERS_PER_KILOWATT_HOUR', 'KILOWATT_HOURS_PER_100_MILES', 'KILOWATT_HOURS_PER_100_KILOMETERS', 'WATT_HOURS_PER_MILE', 'WATT_HOURS_PER_KILOMETER']
+  description: EV fuel economy unit used in the current HMI
+
+HMI.TemperatureUnit:
+  datatype: string
+  type: actuator
+  allowed: ['C', 'F']
+  description: Temperature unit used in the current HMI
+
+HMI.TirePressureUnit:
+  datatype: string
+  type: actuator
+  allowed: ['PSI', 'KPA', 'BAR']
+  description: Tire pressure unit used in the current HMI
+
+HMI.SpeedUnit:
+  datatype: string
+  type: actuator
+  allowed: ['METERS_PER_SECOND', 'MILES_PER_HOUR', 'KILOMETERS_PER_HOUR']
+  description: Speed unit used in the current HMI
+
+HMI.EVEnergyUnits:
+  datatype: string
+  type: actuator
+  allowed: ['WATT_HOURS','AMPERE_HOURS', 'KILOWATT_HOURS']
+  description: EV energy unit used in the current HMI
+  comment: Ampere hours is by definition not an energy unit, but can be used as a measurement of energy
+           if the voltage, like nominal voltage of the battery, is known.
+
+HMI.Brightness:
+  datatype: float
+  type: actuator
+  unit: percent
+  min: 0
+  max: 100
+  description: Brightness of the HMI, relative to supported range.
+               0 = Lowest brightness possible.
+               100 = Maximum Brightness possible.
+  comment: The value 0 does not necessarily correspond to a turned off HMI,
+           as it may not be allowed/supported to turn off the HMI completely.
+
+HMI.DayNightMode:
+  datatype: string
+  type: actuator
+  allowed: ['DAY', 'NIGHT']
+  description: Current display theme
+
+HMI.IsScreenAlwaysOn:
+  datatype: boolean
+  type: actuator
+  description: Used to prevent the screen going black if no action placed.
+
+HMI.LastActionTime:
+  datatype: string
+  type: sensor
+  unit: iso8601
+  description: Time for last hmi action, formatted according to ISO 8601 with UTC time zone.
+
+HMI.DisplayOffDuration:
+  datatype: uint16
+  type: actuator
+  unit: s
+  description: Duration in seconds before the display is turned off. Value shall be 0 if screen never shall turn off.
+  comment: Display shall be turned off at HMI.LastActionTime + HMI.DisplayOffDuration, unless HMI.IsScreenAlwaysOn==True.
+
+SmartphoneProjection:
+  type: branch
+  description: All smartphone projection actions.
+  comment: Smartphone projection exposes or controls specific applications on the Smartphone on the vehicle infotainment system.
+
+SmartphoneProjection.Active:
+  datatype: string
+  type: actuator
+  allowed: [ 'NONE', 'ACTIVE',  'INACTIVE' ]
+  description: Projection activation info.
+  comment: NONE indicates that projection is not supported.
+
+SmartphoneProjection.Source:
+  datatype: string
+  type: actuator
+  allowed: ['USB', 'BLUETOOTH', 'WIFI']
+  description: Connectivity source selected for projection.
+  comment: Smartphone projection exposes or controls specific applications on the Smartphone on the vehicle infotainment system.
+
+SmartphoneProjection.SupportedMode:
+  datatype: string[]
+  type: attribute
+  allowed: [ 'ANDROID_AUTO', 'APPLE_CARPLAY', 'MIRROR_LINK', 'OTHER' ]
+  description: Supportable list for projection.
+
+SmartphoneScreenMirroring:
+  type: branch
+  description: All smartphone screen mirroring actions.
+  comment: Smartphone screen mirroring mirrors the whole screen of the Smartphone on the vehicle infotainment system.
+
+SmartphoneScreenMirroring.Active:
+  datatype: string
+  type: actuator
+  allowed: [ 'NONE', 'ACTIVE', 'INACTIVE' ]
+  description: Mirroring activation info.
+  comment: NONE indicates that mirroring is not supported.
+
+SmartphoneScreenMirroring.Source:
+  datatype: string
+  type: actuator
+  allowed: ['USB', 'BLUETOOTH', 'WIFI']
+  description: Connectivity source selected for mirroring.
+
+#include include/PowerOptimize.vspec
+End of: \spec\Cabin\Infotainment.vspec
+Start of: \spec\Cabin\InteriorLights.vspec
+# Copyright (c) 2016 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# All interior lights and sensors
+#
+
+#
+# Non-configurable lights
+#
+IsGloveBoxOn:
+  datatype: boolean
+  type: actuator
+  description: Is glove box light on
+
+IsDomeOn:
+  datatype: boolean
+  type: actuator
+  description: Is central dome light on
+
+PerceivedAmbientLight:
+  datatype: uint8
+  type: sensor
+  unit: percent
+  min: 0
+  max: 100
+  description: The percentage of ambient light that is measured (e.g., by a sensor) inside the cabin. 0 = No ambient light. 100 = Full brightness.
+  comment: V4.0 named changed from "AmbientLight" to "PerceivedAmbientLight". This is a read-only property that refers to the pre-existing light (e.g., natural light). If you are looking for the in-cabin decorative lights that sometimes are also called "AmbientLights", please refer to the branch Vehicle.Cabin.Light.AmbientLight.
+
+#
+# Configurable lights
+#
+Spotlight:
+  type: branch
+  instances:
+    - Row[1,4]
+    - ["DriverSide","PassengerSide"]
+  description: Spotlight for a specific area in the vehicle.
+#include SingleConfigurableLight.vspec Spotlight
+
+
+AmbientLight:
+  type: branch
+  instances:
+    - Row[1,2]
+    - ["DriverSide","PassengerSide"]
+  description: Decorative coloured light inside the cabin, usually mounted on the door, ceiling, etc.
+#include SingleConfigurableLight.vspec AmbientLight
+
+InteractiveLightBar:
+  type: branch
+  description: Decorative coloured light bar that supports effects, usually mounted on the dashboard (e.g. BMW i7 Interactive bar).
+#include SingleConfigurableLight.vspec InteractiveLightBar
+
+InteractiveLightBar.Effect:
+  type: actuator
+  datatype: string
+  description: Light effect selection from a predefined set of allowed values.
+  comment: Default and allowed values are OEM-specific and should be defined accordingly (e.g. with the use of overlays).
+End of: \spec\Cabin\InteriorLights.vspec
+Start of: \spec\Cabin\Seat.vspec
+# Copyright (c) 2016 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# Seat signals
+#
+# VSS offer two methods to control a seat.
+# As most seat signals are actuators it is possible to request a specific setting,
+# e.g. to request that seat decline shall be 23 degrees.
+# It is also possible to control seat position by switch buttons (boolean actuators)
+# If a switch is engaged (== has the value true) the seat is expected to move according to
+# the selected switch. The movement is normally supposed to continue until either the switch is released,
+# (== has the value false), or until the maximum/minimum value supported by the vehicle has been reached.
+#
+# Seat settings are sometimes defined relative to vehicle x/y/z-axis as defined by ISO 8855:
+# x-axis is the axis going forward/backward on the vehicle
+# y-axis is the axis going left/right on the vehicle
+# z-axis is the axis going up/down on the vehicle
+#
+
+IsOccupied:
+  datatype: boolean
+  type: sensor
+  description: Does the seat have a passenger in it.
+
+Occupant:
+  type: branch
+  description: Occupant data.
+
+# Include the Cabin/Occupant.vspec file and attach all its data under the
+# Occupant branch created above.
+
+#include Seat/Occupant.vspec Occupant
+
+IsBelted:
+  datatype: boolean
+  type: sensor
+  description: Is the belt engaged.
+
+SeatBeltHeight:
+  datatype: uint16
+  type: actuator
+  unit: mm
+  description: Seat belt position on vehicle z-axis.
+               Position is relative within available movable range of the seat belt.
+               0 = Lowermost position supported.
+Heating:
+  deprecation: v4.1 replaced with HeatingCooling
+  datatype: int8
+  type: actuator
+  min: -100
+  max: 100
+  unit: percent
+  description: Seat cooling / heating. 0 = off. -100 = max cold. +100 = max heat.
+
+#include include/ItemHeatingCooling.vspec
+
+Massage:
+  datatype: uint8
+  type: actuator
+  min: 0
+  max: 100
+  unit: percent
+  description: Seat massage level. 0 = off. 100 = max massage.
+
+Position:
+  datatype: uint16
+  type: actuator
+  min: 0
+  unit: mm
+  description: Seat position on vehicle x-axis. Position is relative to the frontmost position supported by the seat.
+               0 = Frontmost position supported.
+
+Height:
+  datatype: uint16
+  type: actuator
+  min: 0
+  unit: mm
+  description: Seat position on vehicle z-axis. Position is relative within available movable range of the seating.
+               0 = Lowermost position supported.
+
+Tilt:
+  datatype: float
+  type: actuator
+  unit: degrees
+  description: Tilting of seat (seating and backrest) relative to vehicle x-axis.
+               0 = seat bottom is flat, seat bottom and vehicle x-axis are parallel.
+               Positive degrees = seat tilted backwards, seat x-axis tilted upward, seat z-axis is tilted backward.
+  comment: In VSS it is assumed that tilting a seat affects both seating (seat bottom) and backrest, i.e. the angle
+           between seating and backrest will not be affected when changing Tilt.
+
+
+Backrest:
+  type: branch
+  description: Describes signals related to the backrest of the seat.
+
+Backrest.Recline:
+  datatype: float
+  type: actuator
+  unit: degrees
+  description: Backrest recline compared to seat z-axis (seat vertical axis).
+               0 degrees = Upright/Vertical backrest.
+               Negative degrees for forward recline. Positive degrees for backward recline.
+  comment:     Seat z-axis depends on seat tilt. This means that movement of backrest due to seat tilting will not
+               affect Backrest.Recline as long as the angle between Seating and Backrest are constant.
+               Absolute recline relative to vehicle z-axis can be calculated as Tilt + Backrest.Recline.
+
+Backrest.Lumbar:
+  type: branch
+  description: Adjustable lumbar support mechanisms in seats allow the user to change the seat back shape.
+
+Backrest.Lumbar.Support:
+  datatype: float
+  type: actuator
+  unit: percent
+  min: 0
+  max: 100
+  description: Lumbar support (in/out position). 0 = Innermost position. 100 = Outermost position.
+
+Backrest.Lumbar.Height:
+  datatype: uint8
+  type: actuator
+  min: 0
+  unit: mm
+  description: Height of lumbar support. Position is relative within available movable range of the lumbar support.
+               0 = Lowermost position supported.
+
+Backrest.SideBolster:
+  type: branch
+  description: Backrest side bolster (lumbar side support) settings.
+
+Backrest.SideBolster.Support:
+  datatype: float
+  type: actuator
+  unit: percent
+  min: 0
+  max: 100
+  description: Side bolster support. 0 = Minimum support (widest side bolster setting).
+               100 = Maximum support.
+
+Seating:
+  type: branch
+  description: Describes signals related to the seat bottom of the seat.
+  comment: Seating is here considered as the part of the seat that supports the thighs.
+           Additional cushions (if any) for support of lower legs is not covered by this branch.
+
+Seating.Length:
+  datatype: uint16
+  type: actuator
+  min: 0
+  unit: mm
+  description: Length adjustment of seating. 0 = Adjustable part of seating in rearmost position
+               (Shortest length of seating).
+
+Headrest:
+  type: branch
+  description: Headrest settings.
+
+Headrest.Height:
+  datatype: uint8
+  type: actuator
+  min: 0
+  unit: mm
+  description: Position of headrest relative to movable range of the head rest. 0 = Bottommost position supported.
+
+Headrest.Angle:
+  datatype: float
+  type: actuator
+  unit: degrees
+  description: Headrest angle, relative to backrest, 0 degrees if parallel to backrest,
+               Positive degrees = tilted forward.
+
+Airbag:
+  type: branch
+  description: Airbag signals.
+
+Airbag.IsDeployed:
+  datatype: boolean
+  type: sensor
+  description: Airbag deployment status. True = Airbag deployed. False = Airbag not deployed.
+
+
+#---------------------- SWITCHES ----------------------
+
+Switch:
+  type: branch
+  description: Seat switch signals
+
+Switch.IsWarmerEngaged:
+  datatype: boolean
+  type: actuator
+  description: Warmer switch for Seat heater (SingleSeat.Heating).
+
+Switch.IsCoolerEngaged:
+  datatype: boolean
+  type: actuator
+  description: Cooler switch for Seat heater (SingleSeat.Heating).
+
+Switch.IsForwardEngaged:
+  datatype: boolean
+  type: actuator
+  description: Seat forward switch engaged (SingleSeat.Position).
+
+Switch.IsBackwardEngaged:
+  datatype: boolean
+  type: actuator
+  description: Seat backward switch engaged (SingleSeat.Position).
+
+Switch.IsUpEngaged:
+  datatype: boolean
+  type: actuator
+  description: Seat up switch engaged (SingleSeat.Height).
+
+Switch.IsDownEngaged:
+  datatype: boolean
+  type: actuator
+  description: Seat down switch engaged (SingleSeat.Height).
+
+Switch.IsTiltForwardEngaged:
+  datatype: boolean
+  type: actuator
+  description: Tilt forward switch engaged (SingleSeat.Tilt).
+
+Switch.IsTiltBackwardEngaged:
+  datatype: boolean
+  type: actuator
+  description: Tilt backward switch engaged (SingleSeat.Tilt).
+
+Switch.Backrest:
+  type: branch
+  description: Describes switches related to the backrest of the seat.
+
+Switch.Backrest.IsReclineForwardEngaged:
+  datatype: boolean
+  type: actuator
+  description: Backrest recline forward switch engaged (SingleSeat.Backrest.Recline).
+
+Switch.Backrest.IsReclineBackwardEngaged:
+  datatype: boolean
+  type: actuator
+  description: Backrest recline backward switch engaged (SingleSeat.Backrest.Recline).
+
+Switch.Backrest.Lumbar:
+  type: branch
+  description: Switches for SingleSeat.Backrest.Lumbar.
+
+Switch.Backrest.Lumbar.IsMoreSupportEngaged:
+  datatype: boolean
+  type: actuator
+  description: Is switch for more lumbar support engaged (SingleSeat.Backrest.Lumbar.Support).
+
+Switch.Backrest.Lumbar.IsLessSupportEngaged:
+  datatype: boolean
+  type: actuator
+  description: Is switch for less lumbar support engaged (SingleSeat.Backrest.Lumbar.Support).
+
+Switch.Backrest.Lumbar.IsUpEngaged:
+  datatype: boolean
+  type: actuator
+  description: Lumbar up switch engaged (SingleSeat.Backrest.Lumbar.Support).
+
+Switch.Backrest.Lumbar.IsDownEngaged:
+  datatype: boolean
+  type: actuator
+  description: Lumbar down switch engaged (SingleSeat.Backrest.Lumbar.Support).
+
+Switch.Backrest.SideBolster:
+  type: branch
+  description: Switches for SingleSeat.Backrest.SideBolster.
+
+Switch.Backrest.SideBolster.IsMoreSupportEngaged:
+  datatype: boolean
+  type: actuator
+  description: Is switch for more side bolster support engaged (SingleSeat.Backrest.SideBolster.Support).
+
+Switch.Backrest.SideBolster.IsLessSupportEngaged:
+  datatype: boolean
+  type: actuator
+  description: Is switch for less side bolster support engaged (SingleSeat.Backrest.SideBolster.Support).
+
+Switch.Seating:
+  type: branch
+  description: Describes switches related to the seating of the seat.
+
+Switch.Seating.IsForwardEngaged:
+  datatype: boolean
+  type: actuator
+  description: Is switch to increase seating length engaged (SingleSeat.Seating.Length).
+
+Switch.Seating.IsBackwardEngaged:
+  datatype: boolean
+  type: actuator
+  description: Is switch to decrease seating length engaged (SingleSeat.Seating.Length).
+
+Switch.Headrest:
+  type: branch
+  description: Switches for SingleSeat.Headrest.
+
+Switch.Headrest.IsUpEngaged:
+  datatype: boolean
+  type: actuator
+  description: Head rest up switch engaged (SingleSeat.Headrest.Height).
+
+Switch.Headrest.IsDownEngaged:
+  datatype: boolean
+  type: actuator
+  description: Head rest down switch engaged (SingleSeat.Headrest.Height).
+
+Switch.Headrest.IsForwardEngaged:
+  datatype: boolean
+  type: actuator
+  description: Head rest forward switch engaged (SingleSeat.Headrest.Angle).
+
+Switch.Headrest.IsBackwardEngaged:
+  datatype: boolean
+  type: actuator
+  description: Head rest backward switch engaged (SingleSeat.Headrest.Angle).
+
+Switch.Massage:
+  type: branch
+  description: Switches for SingleSeat.Massage.
+
+Switch.Massage.IsIncreaseEngaged:
+  datatype: boolean
+  type: actuator
+  description: Increase massage level switch engaged (SingleSeat.Massage).
+
+Switch.Massage.IsDecreaseEngaged:
+  datatype: boolean
+  type: actuator
+  description: Decrease massage level switch engaged (SingleSeat.Massage).
+End of: \spec\Cabin\Seat.vspec
+Start of: \spec\Cabin\SingleConfigurableLight.vspec
+# Copyright (c) 2023 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+
+#
+# Generic specification for a light whose color and brightness can be configured.
+#
+
+IsLightOn:
+  type: actuator
+  datatype: boolean
+  description: Indicates whether the light is turned on. True = On, False = Off.
+
+Intensity:
+  type: actuator
+  datatype: uint8
+  unit: percent
+  min: 1
+  max: 100
+  description: How much of the maximum possible brightness of the light is used. 1 = Maximum attenuation, 100 = No attenuation (i.e. full brightness).
+  comment: Minimum value cannot be zero as on/off is controlled by the actuator IsLightOn. V4.0 moved from Cabin.Lights.AmbientLight.Intensity to enable individual control of lights via the SingleConfigurableLight.vspec.
+
+Color:
+  type: actuator
+  datatype: string
+  description: Hexadecimal color code represented as a 3-byte RGB (i.e. Red, Green, and Blue) value preceded by a hash symbol "#". Allowed range "#000000" to "#FFFFFF".
+  comment: For example; "#C0C0C0" = Silver, "#FFD700" = Gold, "#000000" = Black, "#FFFFFF" = White, etc.
+End of: \spec\Cabin\SingleConfigurableLight.vspec
+Start of: \spec\Cabin\SingleDoor.vspec
+# Copyright (c) 2023 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+
+#
+# Definition of a single door. Start position for Door is Closed.
+#
+
+#include ../include/LockableMovableItem.vspec
+
+#
+# Window description
+#
+Window:
+  type: branch
+  description: Door window status. Start position for Window is Closed.
+
+#include ../include/MovableItem.vspec Window
+
+#
+# Child lock active for door
+#
+
+IsChildLockActive:
+  datatype: boolean
+  type: sensor
+  description: Is door child lock active. True = Door cannot be opened from inside.
+               False = Door can be opened from inside.
+
+#
+# Window shade / curtain status
+#
+Shade:
+  type: branch
+  description: Side window shade. Open = Retracted, Closed = Deployed.
+               Start position for Shade is Open/Retracted.
+
+# Include the standard shade definition used by sunroof
+# and rear shade.
+
+#include ../include/MovableItem.vspec Shade
+End of: \spec\Cabin\SingleDoor.vspec
+Start of: \spec\Cabin\SingleHVACStation.vspec
+# Copyright (c) 2016 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# A single HVAC station in the vehicle.
+#
+
+FanSpeed:
+  datatype: uint8
+  type: actuator
+  min: 0
+  max: 100
+  unit: percent
+  description: Fan Speed, 0 = off. 100 = max
+
+Temperature:
+  datatype: float
+  type: actuator
+  unit: celsius
+  description: Temperature
+
+AirDistribution:
+  datatype: string
+  type: actuator
+  allowed: ['UP', 'MIDDLE', 'DOWN']
+  description: Direction of airstream
+End of: \spec\Cabin\SingleHVACStation.vspec
+Start of: \spec\Chassis\Chassis.vspec
+# Copyright (c) 2016 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# Chassis signals and attributes
+#
+
+Wheelbase:
+  datatype: uint16
+  type: attribute
+  default: 0
+  unit: mm
+  description: Overall wheelbase, in mm.
+
+
+#
+# Axle definition
+#
+Axle:
+  instances:
+    - Row[1,2]
+  type: branch
+  description: Axle signals
+
+AxleCount:
+  datatype: uint8
+  type: attribute
+  default: 2
+  description: Number of axles on the vehicle
+
+
+#
+# Axle attributes
+#
+
+Axle.TreadWidth:
+  datatype: uint16
+  type: attribute
+  unit: mm
+  description: The lateral distance between the centerlines of the base tires at ground, including camber angle.
+               If there are dual rear wheels, measure from the midway points between the inner and outer tires.
+  comment: Corresponds to SAE J1100-2009 W101.
+
+Axle.TrackWidth:
+  datatype: uint16
+  type: attribute
+  unit: mm
+  description: The lateral distance between the centers of the wheels, measured along the spindle, or axle axis.
+               If there are dual rear wheels, measure from the midway points between the inner and outer tires.
+  comment: Corresponds to SAE J1100-2009 W102.
+
+Axle.AxleWidth:
+  datatype: uint16
+  type: attribute
+  unit: mm
+  description: The lateral distance between the wheel mounting faces, measured along the spindle axis.
+  comment: Corresponds to SAE J1100-2009 W113.
+
+Axle.WheelCount:
+  datatype: uint8
+  type: attribute
+  description: Number of wheels on the axle
+
+Axle.WheelDiameter:
+  datatype: float
+  type: attribute
+  unit: inch
+  description: Diameter of wheels (rims without tires), in inches, as per ETRTO / TRA standard.
+
+Axle.WheelWidth:
+  datatype: float
+  type: attribute
+  unit: inch
+  description: Width of wheels (rims without tires), in inches, as per ETRTO / TRA standard.
+
+Axle.SteeringAngle:
+  datatype: float
+  type: sensor
+  unit: degrees
+  description: Single track two-axle model steering angle.
+               Angle according to ISO 8855. Positive = degrees to the left. Negative = degrees to the right.
+  comment: Single track two-axle model steering angle refers to the angle that a centrally mounted wheel would have.
+#
+# Tire attributes
+#
+# Tire size can be specified by different systems
+# The VSS signals are intended to support both ISO metric tire code and flotation/numeric sizes.
+# Note that tires typically specify either tire diameter or aspect ratio, but both are included in VSS
+# for convenience, and it is possible for a vehicle to present both attributes as they can be calculated from each other.
+# Axle.TireDiameter = Axle.WheelDiameter + ((2 * Axle.TireWidth * Axle.TireAspectRatio) /(100*25.4))
+
+Axle.TireDiameter:
+  datatype: float
+  type: attribute
+  unit: inch
+  description: Outer diameter of tires, in inches, as per ETRTO / TRA standard.
+
+Axle.TireWidth:
+  datatype: uint16
+  type: attribute
+  unit: mm
+  description: Nominal section width of tires, in mm, as per ETRTO / TRA standard.
+
+Axle.TireAspectRatio:
+  datatype: uint8
+  type: attribute
+  unit: percent
+  description: Aspect ratio between tire section height and tire section width, as per ETRTO / TRA standard.
+
+#
+# Wheels on Axles
+#
+Axle.Wheel:
+  instances: ["Left","Right"]
+  type: branch
+  description: Wheel signals for axle
+
+#include Wheel.vspec Axle.Wheel
+
+#
+# Parking Brake
+#
+ParkingBrake:
+  type: branch
+  description: Parking brake signals
+
+ParkingBrake.IsEngaged:
+  datatype: boolean
+  type: actuator
+  description: Parking brake status. True = Parking Brake is Engaged. False = Parking Brake is not Engaged.
+
+ParkingBrake.IsAutoApplyEnabled:
+  datatype: boolean
+  type: actuator
+  description: Indicates if parking brake will be automatically engaged when the vehicle engine is turned off.
+#
+# Steering Wheel
+#
+SteeringWheel:
+  type: branch
+  description: Steering wheel signals
+
+SteeringWheel.Angle:
+  datatype: int16
+  type: sensor
+  unit: degrees
+  description: Steering wheel angle. Positive = degrees to the left. Negative = degrees to the right.
+
+SteeringWheel.Tilt:
+  datatype: uint8
+  type: actuator
+  min: 0
+  max: 100
+  unit: percent
+  description: Steering wheel column tilt. 0 = Lowest position. 100 = Highest position.
+
+SteeringWheel.Extension:
+  datatype: uint8
+  type: actuator
+  min: 0
+  max: 100
+  unit: percent
+  description: Steering wheel column extension from dashboard. 0 = Closest to dashboard. 100 = Furthest from dashboard.
+
+#include include/ItemHeatingCooling.vspec SteeringWheel
+
+#
+# Accelerator
+#
+Accelerator:
+  type: branch
+  description: Accelerator signals
+
+Accelerator.PedalPosition:
+  datatype: uint8
+  type: sensor
+  min: 0
+  max: 100
+  unit: percent
+  description: Accelerator pedal position as percent. 0 = Not depressed. 100 = Fully depressed.
+
+
+#
+# Brake
+#
+Brake:
+  type: branch
+  description: Brake system signals
+
+Brake.PedalPosition:
+  datatype: uint8
+  type: sensor
+  min: 0
+  max: 100
+  unit: percent
+  description: Brake pedal position as percent. 0 = Not depressed. 100 = Fully depressed.
+
+Brake.IsDriverEmergencyBrakingDetected:
+  datatype: boolean
+  type: sensor
+  description: Indicates if emergency braking initiated by driver is detected.
+               True = Emergency braking detected. False = Emergency braking not detected.
+  comment: Detection of emergency braking can trigger Emergency Brake Assist (EBA) to engage.
+End of: \spec\Chassis\Chassis.vspec
+Start of: \spec\Chassis\Wheel.vspec
+# Copyright (c) 2016 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# Brake
+#
+Brake:
+  type: branch
+  description: Brake signals for wheel
+
+Brake.FluidLevel:
+  datatype: uint8
+  type: sensor
+  unit: percent
+  max: 100
+  description: Brake fluid level as percent. 0 = Empty. 100 = Full.
+
+Brake.IsFluidLevelLow:
+  datatype: boolean
+  type: sensor
+  description: Brake fluid level status. True = Brake fluid level low. False = Brake fluid level OK.
+
+Brake.PadWear:
+  datatype: uint8
+  type: sensor
+  unit: percent
+  max: 100
+  description: Brake pad wear as percent. 0 = No Wear. 100 = Worn.
+
+Brake.IsBrakesWorn:
+  datatype: boolean
+  type: sensor
+  description: Brake pad wear status. True = Worn. False = Not Worn.
+
+
+#
+# Tire
+#
+Tire:
+  type: branch
+  description: Tire signals for wheel.
+
+Tire.Pressure:
+  datatype: uint16
+  type: sensor
+  unit: kPa
+  description: Tire pressure in kilo-Pascal.
+
+Tire.IsPressureLow:
+  datatype: boolean
+  type: sensor
+  description: Tire Pressure Status. True = Low tire pressure. False = Good tire pressure.
+
+Tire.Temperature:
+  datatype: float
+  type: sensor
+  unit: celsius
+  description: Tire temperature in Celsius.
+
+
+#
+# Wheel signals
+#
+
+Speed:
+  datatype: float
+  type: sensor
+  unit: km/h
+  description: Linear speed of a vehicle's wheel.
+
+AngularSpeed:
+  datatype: float
+  type: sensor
+  unit: degrees/s
+  description: Angular (Rotational) speed of a vehicle's wheel.
+  comment: Positive if wheel is trying to drive vehicle forward.
+           Negative if wheel is trying to drive vehicle backward.
+End of: \spec\Chassis\Wheel.vspec
+Start of: \spec\Driver\Driver.vspec
+# Copyright (c) 2020 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# Driver data
+#
+
+Identifier:
+  deprecation: v5.0 - use data from Vehicle.Occupant.*.*.Identifier.
+  type: branch
+  description: Identifier attributes based on OAuth 2.0.
+
+Identifier.Subject:
+  deprecation: v5.0 - use data from Vehicle.Occupant.*.*.Identifier.
+  datatype: string
+  type: sensor
+  description: Subject for the authentication of the occupant e.g. UserID 7331677.
+
+Identifier.Issuer:
+  deprecation: v5.0 - use data from Vehicle.Occupant.*.*.Identifier.
+  datatype: string
+  type: sensor
+  description: Unique Issuer for the authentication of the occupant e.g. https://accounts.funcorp.com.
+
+DistractionLevel:
+  datatype: float
+  type: sensor
+  unit: percent
+  min: 0
+  max: 100
+  description: Distraction level of the driver, which can be evaluated by multiple factors e.g. driving situation, acoustical or optical signals inside the cockpit, ongoing phone calls.
+
+IsEyesOnRoad:
+  datatype: boolean
+  type: sensor
+  description: Has driver the eyes on road or not?
+
+IsHandsOnWheel:
+  datatype: boolean
+  type: sensor
+  description: Are the driver's hands on the steering wheel or not?
+
+AttentiveProbability:
+  datatype: float
+  type: sensor
+  unit: percent
+  min: 0
+  max: 100
+  description: Probability of attentiveness of the driver.
+
+FatigueLevel:
+  datatype: float
+  type: sensor
+  unit: percent
+  min: 0
+  max: 100
+  description: Fatigue level of the driver, which can be evaluated by multiple factors e.g. trip time, behaviour of steering, eye status.
+
+HeartRate:
+  datatype: uint16
+  type: sensor
+  unit: bpm
+  description: Heart rate of the driver.
+End of: \spec\Driver\Driver.vspec
+Start of: \spec\include\Identifier.vspec
+# Copyright (c) 2020 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# Identifier
+# Based on OAuth 2.0. Subject is the UserID inside the claim of the Issuer Domain.
+#
+
+Subject:
+  datatype: string
+  type: sensor
+  description: Subject for the authentication of the occupant e.g. UserID 7331677.
+
+Issuer:
+  datatype: string
+  type: sensor
+  description: Unique Issuer for the authentication of the occupant e.g. https://accounts.funcorp.com.
+End of: \spec\include\Identifier.vspec
+Start of: \spec\include\ItemHeatingCooling.vspec
+# Copyright (c) 2023 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+HeatingCooling:
+  datatype: int8
+  type: actuator
+  min: -100
+  max: 100
+  unit: percent
+  description: Heating or Cooling requsted for the Item.
+               -100 = Maximum cooling, 0 = Heating/cooling deactivated, 100 = Maximum heating.
+End of: \spec\include\ItemHeatingCooling.vspec
+Start of: \spec\include\LockableMovableItem.vspec
+# Copyright (c) 2016 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# Add-on to MovableItems that also are lockable
+
+IsLocked:
+  datatype: boolean
+  type: actuator
+  description: Is item locked or unlocked. True = Locked. False = Unlocked.
+
+#include MovableItem.vspec
+End of: \spec\include\LockableMovableItem.vspec
+Start of: \spec\include\MovableItem.vspec
+# Copyright (c) 2016 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# Generic signals to control movable items such as door, sunroof, window, blind, etc.
+# The meaning of Open/Close and Start/End position is item dependent and shall better be
+# described by the item using MovableItem.
+#
+# Start position is typically the "default position", where doors/windows/sunroofs are typically closed,
+# but shades/blinders are typically open/retracted.
+#
+# For Shade/Blinders and similar items:
+# "Open" means the Shade/blinder is fully retracted and does not obstruct light
+# "Close" means the Shade/blinder is fully deployed and obstruct light as much as possible
+#
+
+IsOpen:
+  datatype: boolean
+  type: actuator
+  description: Is item open or closed? True = Fully or partially open. False = Fully closed.
+
+Position:
+  datatype: uint8
+  type: actuator
+  min: 0
+  max: 100
+  unit: percent
+  description: Item position. 0 = Start position 100 = End position.
+  comment: Relationship between Open/Close and Start/End position is item dependent.
+
+Switch:
+  datatype: string
+  type: actuator
+  allowed: ['INACTIVE', 'CLOSE', 'OPEN', 'ONE_SHOT_CLOSE', 'ONE_SHOT_OPEN']
+  description: Switch controlling sliding action such as window, sunroof, or blind.
+End of: \spec\include\MovableItem.vspec
+Start of: \spec\include\PowerOptimize.vspec
+# Copyright (c) 2023 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# Architectural Concept
+#
+# A vehicle may have a power optimization system to control functionality in order to extend available range of the vehicle.
+# It is assumed that the power optimization system does not know in detail which functionalities that exist in the vehicle
+# and which functionalities that can be turned off without causing interruptions to essential functionality.
+#
+# This is proposed to be handled by a distributed system where the power optimization system only gives recommendations
+# on power optimization for different areas.
+# The areas are in standard VSS catalog initially assumed to correspond to branches in VSS, and are represented as a signal in the corresponding branch,
+# like `Vehicle.[<Branch>.]*PowerOptimizeLevel`.
+# A global signal `Vehicle.PowerOptimizeLevel` also exists for features that does not have a matching signal in sub-branches.
+#
+# The signal can be added to a branch by including this file, like:
+#
+# "#include include/PowerOptimize.vspec"
+#
+#
+# Initially the standard VSS catalog contains the following level signals:
+#
+#Vehicle.PowerOptimizeLevel
+#Vehicle.Powertrain.PowerOptimizeLevel
+#Vehicle.Body.PowerOptimizeLevel
+#Vehicle.Cabin.PowerOptimizeLevel
+#Vehicle.Cabin.HVAC.PowerOptimizeLevel
+#Vehicle.Cabin.Infotainment.PowerOptimizeLevel
+#Vehicle.ADAS.PowerOptimizeLevel
+#
+# When there are multiple level signals in a subtree (like for the Cabin subtree) a feature may typically consider the "closest" level signal.
+#
+# Example 1: HVAC functionality (signals in branch Vehicle.Cabin.HVAC) may consider Vehicle.Cabin.HVAC.PowerOptimizeLevel
+# Example 2: Sunroof functionality (signals in branch Vehicle.Cabin.Sunroof) may consider Vehicle.Cabin.PowerOptimizeLevel
+#            as there is no specific level signal in Vehicle.Cabin.Sunroof.
+# Example 3: Tire monitoring systems may consider Vehicle.PowerOptimizeLevel as there is no dedicated signal for Chassis branch.
+#
+# The power optimization level has a numerical value from 0 to 10.
+# Level 0 means that power optimization is not needed, all functionality can behave "normally".
+# Level 10 means that power consumption shall be minimized. Non-essential functionality shall be disabled.
+# Essential functionality to fulfill legal and safety requirements shall still be enabled.
+# Intermediate numbers (1-9) indicates intermediate states, where a higher number indicates a more aggressive power optimization policy.
+#
+# This allows for subsystems to implement their own power saving logic.
+# It is totally up to the subsystem to know "what to do" for different power optimize levels.
+# It is also assumed that the subsystem knows what is required for legal and safety reasons and does not turn off
+# essential functionality regardless of power optimization level.
+# It is up to the OEM to configure subsystems to achieve the wanted behavior.
+# It is expected that power optimizations that are activated already at a low level have limited impact on the driver experience,
+# but power optimizations on higher levels will have significant impact on driver experience.
+#
+# A hypothetical example for Display/HMI brightness could be as follows
+#
+# There is a signal Vehicle.Cabin.Infotainment.HMI.Brightness that for example the driver could use to change HMI Brightness.
+# The signal has a range 0-100 percent, where 0% means the lowest value allowed from legal/safety-reasons as well as usability reasons.
+# To allow for energy optimization an OEM might want to change the actual brightness based on power optimization level for cabin.
+#
+# A possible schema could be as follows
+#
+
+#  REAL_MIN = 30 /* Lowest allowed value for safety/legal/convenience-reasons */
+#  REAL_MAX = 90 /* Maximum allowed value for safety/legal/convenience/technical-reasons */
+#  POWERSAVE_MAX_RELATIVE = 45 /* Maximum relative brightness during power optimize */
+#  POWERSAVE_LIMIT = 5 /* Reduce brightness if level is above this value */
+#
+#  if (Vehicle.Cabin.Infotainment.PowerOptimizeLevel > POWERSAVE_LIMIT):
+#    old_value = Vehicle.Cabin.Infotainment.HMI.Brightness;
+#    if (Vehicle.Cabin.Infotainment.HMI.Brightness > POWERSAVE_MAX_RELATIVE):
+#      Vehicle.Cabin.Infotainment.HMI.Brightness = POWERSAVE_MAX_RELATIVE;
+#  else
+#    // Revert to old value
+#    Vehicle.Cabin.Infotainment.HMI.Brightness = old_value;
+#
+#
+# Note that no additional VSS signals is added to represent wanted brightness at power optimization.
+# It is possible that a such signal may be needed in individual deployments, but if so it can be handled by a vehicle specific overlay.
+#
+# Customization
+#
+# In addition to power optimize signals added in standard VSS catalog a project/OEM may customize the model using overlays by:
+#
+# 1. Adding additional power optimize level signals
+#
+# For instance by adding `#include include/PowerOptimize.vspec` in additional files
+#
+# 2. Adding signals for supporting data
+#
+# In specific deployments there might be a need for private signals with additional data for the power optimization strategy used.
+# This could for instance be signals to specify maximum speed for a specific power optimization levels.
+
+##
+# Power Optimization
+##
+
+
+PowerOptimizeLevel:
+  datatype: uint8
+  type: actuator
+  min: 0
+  max: 10
+  description: Power optimization level for this branch/subsystem.
+               A higher number indicates more aggressive power optimization.
+               Level 0 indicates that all functionality is enabled, no power optimization enabled.
+               Level 10 indicates most aggressive power optimization mode, only essential functionality enabled.
+
+IsAutoPowerOptimize:
+  datatype: boolean
+  type: actuator
+  description: Auto Power Optimization Flag When set to 'true',
+               the system enables automatic power optimization,
+               dynamically adjusting the power optimization level based on runtime conditions
+               or features managed by the OEM. When set to 'false',
+               manual control of the power optimization level is allowed.
+End of: \spec\include\PowerOptimize.vspec
+Start of: \spec\OBD\OBD.vspec
+# Copyright (c) 2016 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# On-Board Diagnostic (OBD) Signals
+#
+# These signals are made available through the OBD-II connector
+# found in every vehicle manufactured in the US and sold in the US
+# after 1996.
+#
+# Some of these signals are also available through other nodes in the
+# VSS tree.
+#
+# OBD often use scaling and offset, and has specified limits for each PID
+# (see e.g. https://en.wikipedia.org/wiki/OBD-II_PIDs).
+# In VSS signals represent the real value, the actual encoding used by OBD is not considered.
+# Limits specified by OBD are not explicitly stated in VSS
+# i.e. a VSS OBD signal may theoretically have a value that can not be transferred by OBD.
+#
+# Example: Timing Advance (PID 0E) can in OBD support the range from -64 degrees to +63.5 degrees.
+#          In OBD the value is transmitted as a uint8, to get the real value one must take the
+#          uint8 value, divide by 2 and subtract 64.
+#          E.g. +4.5 degrees is in OBD transmitted as (4.5+64)*2 = 137.
+#
+#          In VSS the signal contains the actual value, i.e. +4.5 degrees is sent as +4.5.
+#
+# *************** NOTE: THE SIGNALS IN THIS FILE ARE DEPRECATED ************************
+# As discussed in https://github.com/COVESA/vehicle_signal_specification/issues/635
+# all signals in this file are deprecated. VSS intends to remove OBD support in VSS 6.0
+#
+# What to do if you as of today use signals from this file
+# 1. Check if any suitable replacement signal exist
+#    Example: if you use "Vehicle.OBD.Speed", consider using "Vehicle.Speed" instead
+# 2. If not and the data may be of general interest; consider creating a pull request
+#    with a replacement signal.
+#    Example: VSS as of today only have Lambda information in OBD branch
+#    If you need VSS signals for Lambda, consider creating new signals in
+#    Vehicle.Powertrain.CombustionEngine branch.
+# 3. If you really need the signals in this file and cannot replace them
+#    Please let us know - we are always interested in how VSS is used.
+#    A possible work-around is that you maintain a local version of this file,
+#    and when OBD-support is removed from VSS you include your local version of this file as an overlay.
+# *************************************************************************************
+#
+#
+
+
+PidsA:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: string[]
+  type: attribute
+  allowed: ["01","02","03","04","05","06","07","08","09","0A","0B","0C","0D","0E","0F","10","11","12","13","14","15","16","17","18","19","1A","1B","1C","1D","1E","1F","20"]
+  description: PID 00 - Array of the supported PIDs 01 to 20 in Hexadecimal.
+
+PidsB:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: string[]
+  type: attribute
+  allowed: ["21","22","23","24","25","26","27","28","29","2A","2B","2C","2D","2E","2F","30","31","32","33","34","35","36","37","38","39","3A","3B","3C","3D","3E","3F","40"]
+  description: PID 20 - Array of the supported PIDs 21 to 40 in Hexadecimal.
+
+PidsC:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: string[]
+  type: attribute
+  allowed: ["41","42","43","44","45","46","47","48","49","4A","4B","4C","4D","4E","4F","50","51","52","53","54","55","56","57","58","59","5A","5B","5C","5D","5E","5F","60"]
+  description: PID 40 - Array of the supported PIDs 41 to 60 in Hexadecimal.
+
+Status:
+  deprecation: v5.0 OBD-branch is deprecated.
+  type: branch
+  description: PID 01 - OBD status
+
+Status.IsMILOn:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: boolean
+  type: sensor
+  description: Malfunction Indicator Light (MIL) False = Off, True = On
+
+Status.DTCCount:
+  deprecation: v5.0 replaced with Vehicle.Diagnostics.DTCCount
+  datatype: uint8
+  type: sensor
+  description: Number of Diagnostic Trouble Codes (DTC)
+
+Status.IgnitionType:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: string
+  type: attribute
+  allowed: ['SPARK', 'COMPRESSION']
+  description: Type of the ignition for ICE - spark = spark plug ignition, compression = self-igniting (Diesel engines)
+
+DTCList:
+  deprecation: v5.0 replaced with Vehicle.Diagnostics.DTCList
+  datatype: string[]
+  type: sensor
+  description: List of currently active DTCs formatted according OBD II (SAE-J2012DA_201812) standard ([P|C|B|U]XXXXX )
+
+FreezeDTC:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: string
+  type: sensor
+  description: PID 02 - DTC that triggered the freeze frame
+
+FuelStatus:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: string
+  type: sensor
+  description: PID 03 - Fuel status
+
+EngineLoad:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 04 - Engine load in percent - 0 = no load, 100 = full load
+
+CoolantTemperature:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: celsius
+  description: PID 05 - Coolant temperature
+
+ShortTermFuelTrim1:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 06 - Short Term (immediate) Fuel Trim - Bank 1 - negative percent leaner, positive percent richer
+
+LongTermFuelTrim1:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 07 - Long Term (learned) Fuel Trim - Bank 1 - negative percent leaner, positive percent richer
+
+ShortTermFuelTrim2:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 08 - Short Term (immediate) Fuel Trim - Bank 2 - negative percent leaner, positive percent richer
+
+LongTermFuelTrim2:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 09 - Long Term (learned) Fuel Trim - Bank 2 - negative percent leaner, positive percent richer
+
+FuelPressure:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: kPa
+  description: PID 0A - Fuel pressure
+
+MAP:
+  datatype: float
+  deprecation: v5.0 OBD-branch is deprecated.
+  type: sensor
+  unit: kPa
+  description: PID 0B - Intake manifold pressure
+
+EngineSpeed:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: rpm
+  description: PID 0C - Engine speed measured as rotations per minute
+
+Speed:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: km/h
+  description: PID 0D - Vehicle speed
+
+TimingAdvance:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: degrees
+  description: PID 0E - Time advance
+
+IntakeTemp:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: celsius
+  description: PID 0F - Intake temperature
+
+MAF:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: g/s
+  description: PID 10 - Grams of air drawn into engine per second
+
+ThrottlePosition:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 11 - Throttle position - 0 = closed throttle, 100 = open throttle
+
+AirStatus:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: string
+  type: sensor
+  description: PID 12 - Secondary air status
+
+# OBD supports reporting of up to 8 oxygen sensors
+# PID 13 or PID 1D can be used as bitmasks to define logical location of the sensors
+# Example 1: PID 13 = 0x11 means that PID 14 and PID 18 shall be present
+# PID 14 is then first sensor on bank 1, PID 18 is the first sensor on bank2
+# Vehicles with more than 2 banks report sensor mapping in PID 1D instead of PID 13
+#
+OxygenSensorsIn2Banks:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: uint8
+  type: sensor
+  description: PID 13 - Presence of oxygen sensors in 2 banks. [A0..A3] == Bank 1, Sensors 1-4. [A4..A7] == Bank 2, Sensors 1-4
+
+O2:
+  deprecation: v5.0 OBD-branch is deprecated.
+  instances:
+    - Sensor[1,8]
+  type: branch
+  description: Oxygen sensors (PID 14 - PID 1B)
+
+O2.Voltage:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: V
+  description: PID 1x (byte A) - Sensor voltage
+
+O2.ShortTermFuelTrim:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 1x (byte B) - Short term fuel trim
+
+OBDStandards:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: uint8
+  type: attribute
+  description: PID 1C - OBD standards this vehicle conforms to
+
+OxygenSensorsIn4Banks:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: uint8
+  type: sensor
+  description: PID 1D - Presence of oxygen sensors in 4 banks. Similar to PID 13, but [A0..A7] == [B1S1, B1S2, B2S1, B2S2, B3S1, B3S2, B4S1, B4S2]
+
+IsPTOActive:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: boolean
+  type: sensor
+  description: PID 1E - Auxiliary input status (power take off)
+
+RunTime:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: s
+  description: PID 1F - Engine run time
+
+DistanceWithMIL:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: km
+  description: PID 21 - Distance traveled with MIL on
+
+FuelRailPressureVac:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: kPa
+  description: PID 22 - Fuel rail pressure relative to vacuum
+
+FuelRailPressureDirect:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: kPa
+  description: PID 23 - Fuel rail pressure direct inject
+
+O2WR:
+  deprecation: v5.0 OBD-branch is deprecated.
+  instances:
+    - Sensor[1,8]
+  type: branch
+  description: Wide range/band oxygen sensors (PID 24 - 2B and PID 34 - 3B)
+
+O2WR.Lambda:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  description: PID 2x (byte AB) and PID 3x (byte AB) - Lambda for wide range/band oxygen sensor
+
+O2WR.Voltage:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: V
+  description: PID 2x (byte CD) - Voltage for wide range/band oxygen sensor
+
+O2WR.Current:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: A
+  description: PID 3x (byte CD) - Current for wide range/band oxygen sensor
+
+CommandedEGR:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 2C - Commanded exhaust gas recirculation (EGR)
+
+EGRError:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 2D - Exhaust gas recirculation (EGR) error
+
+CommandedEVAP:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 2E - Commanded evaporative purge (EVAP) valve
+
+FuelLevel:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 2F - Fuel level in the fuel tank
+
+WarmupsSinceDTCClear:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: uint8
+  type: sensor
+  description: PID 30 - Number of warm-ups since codes cleared
+
+DistanceSinceDTCClear:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: km
+  description: PID 31 - Distance traveled since codes cleared
+
+EVAPVaporPressure:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: Pa
+  description: PID 32 - Evaporative purge (EVAP) system pressure
+
+BarometricPressure:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: kPa
+  description: PID 33 - Barometric pressure
+
+Catalyst:
+  deprecation: v5.0 OBD-branch is deprecated.
+  type: branch
+  description: Catalyst signals
+
+Catalyst.Bank1:
+  deprecation: v5.0 OBD-branch is deprecated.
+  type: branch
+  description: Catalyst bank 1 signals
+
+Catalyst.Bank1.Temperature1:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: celsius
+  description: PID 3C - Catalyst temperature from bank 1, sensor 1
+
+Catalyst.Bank1.Temperature2:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: celsius
+  description: PID 3E - Catalyst temperature from bank 1, sensor 2
+
+Catalyst.Bank2:
+  deprecation: v5.0 OBD-branch is deprecated.
+  type: branch
+  description: Catalyst bank 2 signals
+
+Catalyst.Bank2.Temperature1:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: celsius
+  description: PID 3D - Catalyst temperature from bank 2, sensor 1
+
+Catalyst.Bank2.Temperature2:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: celsius
+  description: PID 3F - Catalyst temperature from bank 2, sensor 2
+
+DriveCycleStatus:
+  deprecation: v5.0 OBD-branch is deprecated.
+  type: branch
+  description: PID 41 - OBD status for the current drive cycle
+
+DriveCycleStatus.IsMILOn:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: boolean
+  type: sensor
+  description: Malfunction Indicator Light (MIL) - False = Off, True = On
+
+DriveCycleStatus.DTCCount:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: uint8
+  type: sensor
+  description: Number of sensor Trouble Codes (DTC)
+
+DriveCycleStatus.IgnitionType:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: string
+  type: sensor
+  allowed: ['SPARK', 'COMPRESSION']
+  description: Type of the ignition for ICE - spark = spark plug ignition, compression = self-igniting (Diesel engines)
+
+ControlModuleVoltage:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: V
+  description: PID 42 - Control module voltage
+
+AbsoluteLoad:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 43 - Absolute load value
+
+CommandedEquivalenceRatio:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: ratio
+  description: PID 44 - Commanded equivalence ratio
+
+RelativeThrottlePosition:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 45 - Relative throttle position
+
+AmbientAirTemperature:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: celsius
+  description: PID 46 - Ambient air temperature
+
+ThrottlePositionB:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 47 - Absolute throttle position B
+
+ThrottlePositionC:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 48 - Absolute throttle position C
+
+AcceleratorPositionD:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 49 - Accelerator pedal position D
+
+AcceleratorPositionE:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 4A - Accelerator pedal position E
+
+AcceleratorPositionF:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 4B - Accelerator pedal position F
+
+ThrottleActuator:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 4C - Commanded throttle actuator
+
+RunTimeMIL:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: min
+  description: PID 4D - Run time with MIL on
+
+TimeSinceDTCCleared:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: min
+  description: PID 4E - Time since trouble codes cleared
+
+MaxMAF:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: g/s
+  description: PID 50 - Maximum flow for mass air flow sensor
+
+FuelType:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: uint8
+  type: attribute
+  min: 0
+  max: 23
+  description: PID 51 - Fuel type
+
+EthanolPercent:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 52 - Percentage of ethanol in the fuel
+
+EVAPVaporPressureAbsolute:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: kPa
+  description: PID 53 - Absolute evaporative purge (EVAP) system pressure
+
+EVAPVaporPressureAlternate:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: Pa
+  description: PID 54 - Alternate evaporative purge (EVAP) system pressure
+
+ShortTermO2Trim1:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 55 (byte A) - Short term secondary O2 trim - Bank 1
+
+ShortTermO2Trim3:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 55 (byte B) - Short term secondary O2 trim - Bank 3
+
+LongTermO2Trim1:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 56 (byte A) - Long term secondary O2 trim - Bank 1
+
+LongTermO2Trim3:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 56 (byte B) - Long term secondary O2 trim - Bank 3
+
+ShortTermO2Trim2:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 57 (byte A) - Short term secondary O2 trim - Bank 2
+
+ShortTermO2Trim4:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 57 (byte B) - Short term secondary O2 trim - Bank 4
+
+LongTermO2Trim2:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 58 (byte A) - Long term secondary O2 trim - Bank 2
+
+LongTermO2Trim4:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 58 (byte B) - Long term secondary O2 trim - Bank 4
+
+FuelRailPressureAbsolute:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: kPa
+  description: PID 59 - Absolute fuel rail pressure
+
+RelativeAcceleratorPosition:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 5A - Relative accelerator pedal position
+
+HybridBatteryRemaining:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: percent
+  description: PID 5B - Remaining life of hybrid battery
+
+OilTemperature:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: celsius
+  description: PID 5C - Engine oil temperature
+
+FuelInjectionTiming:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: degrees
+  description: PID 5D - Fuel injection timing
+
+FuelRate:
+  deprecation: v5.0 OBD-branch is deprecated.
+  datatype: float
+  type: sensor
+  unit: l/h
+  description: PID 5E - Engine fuel rate
+End of: \spec\OBD\OBD.vspec
+Start of: \spec\Powertrain\CombustionEngine.vspec
+# Copyright (c) 2016 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# ENGINE SPECIFICATION FILE
+#
+# This vehicle specification file, included by the top level
+# root.vspec file, contains all engine-based signals.
+#
+
+#
+# Engine attributes
+#
+EngineCode:
+  datatype: string
+  type: attribute
+  description: Engine code designation, as specified by vehicle manufacturer.
+  comment: For hybrid vehicles the engine code may refer to the combination of
+           combustion and electric engine.
+
+Displacement:
+  datatype: uint16
+  type: attribute
+  description: Displacement in cubic centimetres.
+  unit: cm^3
+
+StrokeLength:
+  datatype: float
+  type: attribute
+  description: Stroke length in millimetres.
+  unit: mm
+
+Bore:
+  datatype: float
+  type: attribute
+  description: Bore in millimetres.
+  unit: mm
+
+Configuration:
+  datatype: string
+  type: attribute
+  allowed: ['UNKNOWN', 'STRAIGHT', 'V', 'BOXER', 'W',
+        'ROTARY', 'RADIAL', 'SQUARE', 'H', 'U', 'OPPOSED', 'X']
+  description: Engine configuration.
+  default: 'UNKNOWN'
+
+NumberOfCylinders:
+  datatype: uint16
+  type: attribute
+  description: Number of cylinders.
+
+NumberOfValvesPerCylinder:
+  datatype: uint16
+  type: attribute
+  description: Number of valves per cylinder.
+
+CompressionRatio:
+  datatype: string
+  type: attribute
+  description: Engine compression ratio, specified in the format 'X:1', e.g. '9.2:1'.
+
+EngineOilCapacity:
+  deprecation: v5.0 moved to EngineOil.Capacity
+  datatype: float
+  type: attribute
+  description: Engine oil capacity in liters.
+  unit: l
+
+EngineCoolantCapacity:
+  deprecation: v5.0 moved to EngineCoolant.Capacity
+  datatype: float
+  type: attribute
+  description: Engine coolant capacity in liters.
+  unit: l
+
+MaxPower:
+  datatype: uint16
+  type: attribute
+  default: 0
+  unit: kW
+  description: Peak power, in kilowatts, that engine can generate.
+
+MaxTorque:
+  datatype: uint16
+  type: attribute
+  default: 0
+  unit: Nm
+  description: Peak torque, in newton meter, that the engine can generate.
+
+AspirationType:
+  datatype: string
+  type: attribute
+  allowed: ['UNKNOWN', 'NATURAL', 'SUPERCHARGER', 'TURBOCHARGER']
+  default: 'UNKNOWN'
+  description: Type of aspiration (natural, turbocharger, supercharger etc).
+
+EngineOilLevel:
+  deprecation: v5.0 moved to EngineOil.Level
+  datatype: string
+  type: sensor
+  allowed: [
+    'CRITICALLY_LOW',  # Critically low, immediate action required
+    'LOW',             # Level below recommended range, but not critical
+    'NORMAL',          # Within normal range, no need for driver action
+    'HIGH',            # Level above recommended range, but not critical
+    'CRITICALLY_HIGH'  # Critically high, immediate action required
+    ]
+  description: Engine oil level.
+
+OilLifeRemaining:
+  deprecation: v5.0 moved to EngineOil.LifeRemaining
+  datatype: int32
+  type: sensor
+  description: Remaining engine oil life in seconds.
+               Negative values can be used to indicate that lifetime has been exceeded.
+  comment: In addition to this a signal a vehicle can report remaining time to service (including e.g. oil change)
+           by Vehicle.Service.TimeToService.
+  unit: s
+
+IsRunning:
+  datatype: boolean
+  type: sensor
+  description: Engine Running. True if engine is rotating (Speed > 0).
+
+#
+# Engine rotations per minute
+#
+Speed:
+  datatype: uint16
+  type: sensor
+  unit: rpm
+  description: Engine speed measured as rotations per minute.
+
+EngineHours:
+  datatype: float
+  type: sensor
+  description: Accumulated time during engine lifetime with 'engine speed (rpm) > 0'.
+  unit: h
+
+IdleHours:
+  datatype: float
+  type: sensor
+  description: Accumulated idling time during engine lifetime.
+               Definition of idling is not standardized.
+  comment: Vehicles may calculate accumulated idle time for an engine.
+           It might be based on engine speed (rpm) below a certain limit or any other mechanism.
+  unit: h
+
+#
+# Engine coolant temperature
+#
+ECT:
+  deprecation: v5.0 moved to EngineCoolant.Temperature
+  datatype: float
+  type: sensor
+  unit: celsius
+  description: Engine coolant temperature.
+
+#
+# Engine Oil Temperature
+#
+EOT:
+  deprecation: v5.0 moved to EngineOil.Temperature
+  datatype: float
+  type: sensor
+  unit: celsius
+  description: Engine oil temperature.
+
+#
+# Engine oil
+#
+EngineOil:
+  type: branch
+  description: Signals related to the engine oil
+
+EngineOil.Capacity:
+  datatype: float
+  type: attribute
+  description: Engine oil capacity in liters.
+  unit: l
+
+EngineOil.Level:
+  datatype: string
+  type: sensor
+  allowed: [
+    'CRITICALLY_LOW',  # Critically low, immediate action required
+    'LOW',             # Level below recommended range, but not critical
+    'NORMAL',          # Within normal range, no need for driver action
+    'HIGH',            # Level above recommended range, but not critical
+    'CRITICALLY_HIGH'  # Critically high, immediate action required
+    ]
+  description: Engine oil level.
+
+EngineOil.LifeRemaining:
+  datatype: int32
+  type: sensor
+  description: Remaining engine oil life in seconds.
+               Negative values can be used to indicate that lifetime has been exceeded.
+  comment: In addition to this a signal a vehicle can report remaining time to service (including e.g. oil change)
+           by Vehicle.Service.TimeToService.
+  unit: s
+
+EngineOil.Temperature:
+  datatype: float
+  type: sensor
+  unit: celsius
+  description: EOT, Engine oil temperature.
+
+#
+# Engine coolant
+#
+EngineCoolant:
+  type: branch
+  description: Signals related to the engine coolant
+#include EngineCoolant.vspec EngineCoolant
+
+#
+# Manifold Absolute Pressure
+#
+MAP:
+  datatype: uint16
+  type: sensor
+  unit: kPa
+  description: Manifold absolute pressure possibly boosted using forced induction.
+
+#
+# Mass Air Flow
+#
+MAF:
+  datatype: uint16
+  type: sensor
+  unit: g/s
+  description: Grams of air drawn into engine per second.
+
+#
+# Throttle Position
+#
+TPS:
+  datatype: uint8
+  type: sensor
+  unit: percent
+  max: 100
+  description: Current throttle position.
+
+#
+# Engine Oil Pressure
+#
+EOP:
+  datatype: uint16
+  type: sensor
+  unit: kPa
+  description: Engine oil pressure.
+
+#
+# Current Power
+#
+Power:
+  datatype: uint16
+  type: sensor
+  unit: kW
+  description: Current engine power output. Shall be reported as 0 during engine breaking.
+
+#
+# Current Torque
+#
+Torque:
+  datatype: int16
+  type: sensor
+  unit: Nm
+  description: Current engine torque. Shall be reported as a negative number during engine breaking.
+  comment: During engine breaking the engine delivers a negative torque to the transmission.
+
+#
+# Diesel Exhaust Fluid
+#
+
+DieselExhaustFluid:
+  type: branch
+  description: Signals related to Diesel Exhaust Fluid (DEF).
+               DEF is called AUS32 in ISO 22241.
+  comment: In retail and marketing other names are typically used for the fluid.
+
+DieselExhaustFluid.Capacity:
+  datatype: float
+  type: attribute
+  unit: l
+  description: Capacity in liters of the Diesel Exhaust Fluid Tank.
+
+DieselExhaustFluid.Level:
+  datatype: uint8
+  type: sensor
+  unit: percent
+  min: 0
+  max: 100
+  description: Level of the Diesel Exhaust Fluid tank as percent of capacity. 0 = empty. 100 = full.
+
+DieselExhaustFluid.Range:
+  datatype: uint32
+  type: sensor
+  unit: m
+  description: Remaining range in meters of the Diesel Exhaust Fluid present in the vehicle.
+
+DieselExhaustFluid.IsLevelLow:
+  datatype: boolean
+  type: sensor
+  description: Indicates if the Diesel Exhaust Fluid level is low.
+               True if level is low.
+               Definition of low is vehicle dependent.
+
+#
+# Diesel Particulate Filter
+#
+DieselParticulateFilter:
+  type: branch
+  description: Diesel Particulate Filter signals.
+
+#
+# Current inlet Temperature of Diesel Particulate Filter
+#
+DieselParticulateFilter.InletTemperature:
+  datatype: float
+  type: sensor
+  unit: celsius
+  description: Inlet temperature of Diesel Particulate Filter.
+
+#
+# Current outlet Temperature of Diesel Particulate Filter
+#
+DieselParticulateFilter.OutletTemperature:
+  datatype: float
+  type: sensor
+  unit: celsius
+  description: Outlet temperature of Diesel Particulate Filter.
+
+#
+# Current delta pressure of Diesel Particulate Filter
+#
+DieselParticulateFilter.DeltaPressure:
+  datatype: float
+  type: sensor
+  unit: Pa
+  description: Delta Pressure of Diesel Particulate Filter.
+End of: \spec\Powertrain\CombustionEngine.vspec
+Start of: \spec\Powertrain\ElectricMotor.vspec
+# Copyright (c) 2016 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# EV Motor signals and attributes
+#
+
+EngineCode:
+  datatype: string
+  type: attribute
+  description: Engine code designation, as specified by vehicle manufacturer.
+
+MaxPower:
+  datatype: uint16
+  type: attribute
+  default: 0
+  unit: kW
+  description: Peak power, in kilowatts, that motor(s) can generate.
+
+MaxTorque:
+  datatype: uint16
+  type: attribute
+  default: 0
+  unit: Nm
+  description: Peak power, in newton meter, that the motor(s) can generate.
+
+MaxRegenPower:
+  datatype: uint16
+  type: attribute
+  default: 0
+  unit: kW
+  description: Peak regen/brake power, in kilowatts, that motor(s) can generate.
+
+MaxRegenTorque:
+  datatype: uint16
+  type: attribute
+  default: 0
+  unit: Nm
+  description: Peak regen/brake torque, in newton meter, that the motor(s) can generate.
+
+#
+# Motor rotations per minute
+#
+Speed:
+  datatype: int32
+  type: sensor
+  unit: rpm
+  description: Motor rotational speed measured as rotations per minute. Negative values indicate reverse driving mode.
+
+TimeInUse:
+  datatype: float
+  type: sensor
+  description: Accumulated time during engine lifetime when the vehicule state's is 'READY'.
+  comment: Vehicles may define their READY state.
+  unit: h
+
+#
+# Motor temperature
+#
+Temperature:
+  datatype: float
+  type: sensor
+  unit: celsius
+  description: Motor temperature.
+
+
+#
+# Motor coolant temperature (if applicable)
+#
+CoolantTemperature:
+  deprecation: v5.0 moved to EngineCoolant.Temperature
+  datatype: float
+  type: sensor
+  unit: celsius
+  description: Motor coolant temperature (if applicable).
+
+#
+# Engine coolant
+#
+EngineCoolant:
+  type: branch
+  description: Signals related to the engine coolant (if applicable).
+#include EngineCoolant.vspec EngineCoolant
+
+#
+# Current Power
+#
+Power:
+  datatype: int16
+  type: sensor
+  unit: kW
+  description: Current motor power output. Negative values indicate regen mode.
+
+#
+# Current Torque
+#
+Torque:
+  datatype: int16
+  type: sensor
+  unit: Nm
+  description: Current motor torque. Negative values indicate regen mode.
+End of: \spec\Powertrain\ElectricMotor.vspec
+Start of: \spec\Powertrain\EngineCoolant.vspec
+# Copyright (c) 2016 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+Capacity:
+  datatype: float
+  type: attribute
+  description: Engine coolant capacity in liters.
+  unit: l
+
+Temperature:
+  datatype: float
+  type: sensor
+  unit: celsius
+  description: Engine coolant temperature.
+
+Level:
+  datatype: string
+  type: sensor
+  allowed: [
+    'CRITICALLY_LOW',  # Critically low, immediate action required
+    'LOW',             # Level below recommended range, but not critical
+    'NORMAL',          # Within normal range, no need for driver action
+    ]
+  description: Engine coolant level.
+
+LifeRemaining:
+  datatype: int32
+  type: sensor
+  description: Remaining engine coolant life in seconds.
+               Negative values can be used to indicate that lifetime has been exceeded.
+  comment: In addition to this a signal a vehicle can report remaining time to service (including e.g. coolant change)
+           by Vehicle.Service.TimeToService.
+  unit: s
+End of: \spec\Powertrain\EngineCoolant.vspec
+Start of: \spec\Powertrain\FuelSystem.vspec
+# Copyright (c) 2016 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# Fuel system for ICE / hybrids
+#
+
+SupportedFuelTypes:
+  datatype: string[]
+  type: attribute
+  allowed: ['GASOLINE', 'DIESEL', 'E85', 'LPG', 'CNG', 'LNG', 'H2', 'OTHER']
+  description: High level information of fuel types supported
+  comment: If a vehicle also has an electric drivetrain (e.g. hybrid) that will be obvious from the PowerTrain.Type signal.
+
+SupportedFuel:
+  datatype: string[]
+  type: attribute
+  allowed: ['E5_95', 'E5_98', 'E10_95', 'E10_98', 'E85', 'B7', 'B10', 'B20', 'B30', 'B100',
+            'XTL', 'LPG', 'CNG', 'LNG', 'H2', 'OTHER']
+  description: Detailed information on fuels supported by the vehicle.
+               Identifiers originating from DIN EN 16942:2021-08, appendix B,
+               with additional suffix for octane (RON) where relevant.
+  comment: RON 95 is sometimes referred to as Super, RON 98 as Super Plus.
+
+HybridType:
+  datatype: string
+  type: attribute
+  allowed: ['UNKNOWN', 'NOT_APPLICABLE', 'STOP_START', 'BELT_ISG', 'CIMG', 'PHEV']
+  default: 'UNKNOWN'
+  description: Defines the hybrid type of the vehicle.
+
+TankCapacity:
+  datatype: float
+  type: attribute
+  unit: l
+  description: Capacity of the fuel tank in liters.
+
+AbsoluteLevel:
+  datatype: float
+  type: sensor
+  unit: l
+  description: Current available fuel in the fuel tank expressed in liters.
+
+RelativeLevel:
+  datatype: uint8
+  type: sensor
+  unit: percent
+  min: 0
+  max: 100
+  description: Level in fuel tank as percent of capacity. 0 = empty. 100 = full.
+
+Range:
+  datatype: uint32
+  type: sensor
+  unit: m
+  description: Remaining range in meters using only liquid fuel.
+
+TimeRemaining:
+  datatype: uint32
+  type: sensor
+  unit: s
+  description: Time remaining in seconds before the fuel tank is empty.
+
+InstantConsumption:
+  datatype: float
+  type: sensor
+  unit: l/100km
+  min: 0
+  description: Current consumption in liters per 100 km.
+
+AverageConsumption:
+  datatype: float
+  type: sensor
+  unit: l/100km
+  min: 0
+  description: Average consumption in liters per 100 km.
+# The period used to calculate average consumption is OEM-specific
+# It may e.g. be average consumption since start of current trip,
+# since a user-initiated reset or during the lifetime of the vehicle.
+
+ConsumptionSinceStart:
+  datatype: float
+  type: sensor
+  unit: l
+  description: Fuel amount in liters consumed since start of current trip.
+  comment: A new trip is considered to start when engine gets enabled (e.g. LowVoltageSystemState in ON or START mode).
+           A trip is considered to end when engine is no longer enabled.
+           The signal may however keep the value of the last trip until a new trip is started.
+
+IsEngineStopStartEnabled:
+  datatype: boolean
+  type: sensor
+  description: Indicates whether eco start stop is currently enabled.
+
+IsFuelLevelLow:
+  datatype: boolean
+  type: sensor
+  description: Indicates that the fuel level is low (e.g. <50km range).
+
+RefuelPortPosition:
+  datatype: string[]
+  type: attribute
+  allowed: ['FRONT_LEFT', 'FRONT_MIDDLE', 'FRONT_RIGHT',
+            'REAR_LEFT', 'REAR_MIDDLE', 'REAR_RIGHT',
+            'LEFT_FRONT', 'LEFT_MIDDLE', 'LEFT_REAR',
+            'RIGHT_FRONT', 'RIGHT_MIDDLE', 'RIGHT_REAR']
+  description: Position of refuel port(s).
+               First part indicates side of vehicle, second part relative position on that side.
+
+IsFuelPortFlapOpen:
+  datatype: boolean
+  type: actuator
+  description: Status of the fuel port flap(s). True if at least one is open.
+End of: \spec\Powertrain\FuelSystem.vspec
+Start of: \spec\Powertrain\Powertrain.vspec
+# Copyright (c) 2016 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+AccumulatedBrakingEnergy:
+  datatype: float
+  type: sensor
+  unit: kWh
+  description: The accumulated energy from regenerative braking over lifetime.
+
+Range:
+  datatype: uint32
+  type: sensor
+  unit: m
+  description: Remaining range in meters using all energy sources available in the vehicle.
+
+TimeRemaining:
+  datatype: uint32
+  type: sensor
+  unit: s
+  description: Time remaining in seconds before all energy sources available in the vehicle are empty.
+
+Type:
+  datatype: string
+  type: attribute
+  allowed: ['COMBUSTION', 'HYBRID', 'ELECTRIC']
+  description: Defines the powertrain type of the vehicle.
+  comment: For vehicles with a combustion engine (including hybrids) more detailed information on fuels supported can
+           be found in FuelSystem.SupportedFuelTypes and FuelSystem.SupportedFuels.
+
+#include include/PowerOptimize.vspec
+End of: \spec\Powertrain\Powertrain.vspec
+Start of: \spec\Powertrain\TractionBattery.vspec
+# Copyright (c) 2016 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# Signals and attributes related to the traction battery in vehicles with electrical powertrain.
+# For some vehicles the traction battery is referred to as the high voltage battery.
+#
+
+Id:
+  datatype: string
+  type: attribute
+  description: Battery Identification Number as assigned by OEM.
+  comment: This could be serial number, part number plus serial number, UUID,
+           or any other identifier that the OEM want to use to uniquely identify the battery individual.
+
+ProductionDate:
+  datatype: string
+  type: attribute
+  unit: iso8601
+  description: Production date of battery in ISO8601 format, e.g. YYYY-MM-DD.
+
+ErrorCodes:
+  datatype: string[]
+  type: sensor
+  description: Current error codes related to the battery, if any.
+  comment:     Error code format is not defined, it may be DTCs according to OBD II (SAE-J2012DA_201812)
+               standard ([P|C|B|U]XXXXX ) or any other format.
+
+IsPowerConnected:
+  datatype: boolean
+  type: sensor
+  description: Indicating if the power (positive terminator) of the traction battery is connected to the powertrain.
+  comment: It might be possible to disconnect the traction battery used by an electric powertrain.
+           This is achieved by connectors, typically one for plus and one for minus.
+
+IsGroundConnected:
+  datatype: boolean
+  type: sensor
+  description: Indicating if the ground (negative terminator) of the traction battery is connected to the powertrain.
+  comment: It might be possible to disconnect the traction battery used by an electric powertrain.
+           This is achieved by connectors, typically one for plus and one for minus.
+
+Temperature:
+  type: branch
+  description: Temperature Information for the battery pack.
+
+Temperature.Average:
+  datatype: float
+  type: sensor
+  unit: celsius
+  description: Current average temperature of the battery cells.
+
+Temperature.Min:
+  datatype: float
+  type: sensor
+  unit: celsius
+  description: Current minimum temperature of the battery cells, i.e. temperature of the coldest cell.
+
+Temperature.Max:
+  datatype: float
+  type: sensor
+  unit: celsius
+  description: Current maximum temperature of the battery cells, i.e. temperature of the hottest cell.
+
+Temperature.CellTemperature:
+  datatype: float[]
+  type: sensor
+  description: Array of cell temperatures. Length or array shall correspond to number of cells in vehicle.
+  comment: Cells are identified by relative position in array.
+
+CellVoltage:
+  type: branch
+  description: Voltage information for cells in the battery pack.
+
+CellVoltage.Min:
+  datatype: float
+  type: sensor
+  unit: V
+  description: Current voltage of the battery cell with lowest voltage.
+
+CellVoltage.IdMin:
+  datatype: uint16
+  type: sensor
+  description: Identifier of the battery cell with lowest voltage.
+  comment: Identifier is supposed to be relative index of the cell, starting with 0 the first cell.
+
+CellVoltage.Max:
+  datatype: float
+  type: sensor
+  unit: V
+  description: Current voltage of the battery cell with highest voltage.
+
+CellVoltage.IdMax:
+  datatype: uint16
+  type: sensor
+  description: Identifier of the battery cell with highest voltage.
+  comment: Identifier is supposed to be relative index of the cell, starting with 0 the first cell.
+
+CellVoltage.CellVoltages:
+  datatype: float[]
+  type: sensor
+  description: Array of cell voltages. Length or array shall correspond to number of cells in vehicle.
+  comment: Cells are identified by relative position in array.
+
+GrossCapacity:
+  datatype: uint16
+  type: attribute
+  unit: kWh
+  description: Gross capacity of the battery.
+
+NetCapacity:
+  datatype: uint16
+  type: sensor
+  unit: kWh
+  description: Total net capacity of the battery considering aging.
+
+StateOfHealth:
+  datatype: float
+  type: sensor
+  unit: percent
+  min: 0
+  max: 100
+  description: Calculated battery state of health at standard conditions.
+  comment: Exact formula is implementation dependent.
+           Could be e.g. current capacity at 20 degrees Celsius divided with original capacity at the same temperature.
+
+StateOfCharge:
+  type: branch
+  description: Information on the state of charge of the vehicle's high voltage battery.
+
+StateOfCharge.Current:
+  type: sensor
+  unit: percent
+  datatype: float
+  min: 0
+  max: 100.00
+  description: Physical state of charge of the high voltage battery, relative to net capacity.
+               This is not necessarily the state of charge being displayed to the customer.
+
+StateOfCharge.Displayed:
+  type: sensor
+  datatype: float
+  unit: percent
+  min: 0
+  max: 100.00
+  description: State of charge displayed to the customer.
+
+StateOfCharge.CurrentEnergy:
+  type: sensor
+  datatype: float
+  unit: kWh
+  description: Physical state of charge of high voltage battery expressed in kWh.
+  comment: Current energy could be calculated as .StateOfCharge.Current * .NetCapacity.
+
+NominalVoltage:
+  datatype: uint16
+  type: attribute
+  unit: V
+  description: Nominal Voltage of the battery.
+  comment: Nominal voltage typically refers to voltage of fully charged battery when delivering rated capacity.
+
+MaxVoltage:
+  datatype: uint16
+  type: attribute
+  unit: V
+  description: Max allowed voltage of the battery, e.g. during charging.
+
+CurrentVoltage:
+  datatype: float
+  type: sensor
+  unit: V
+  description: Current Voltage of the battery.
+
+CurrentCurrent:
+  datatype: float
+  type: sensor
+  unit: A
+  description: Current current flowing in/out of battery. Positive = Current flowing in to battery, e.g. during charging.
+               Negative = Current flowing out of battery, e.g. during driving.
+
+CurrentPower:
+  datatype: float
+  type: sensor
+  unit: W
+  description: Current electrical energy flowing in/out of battery. Positive = Energy flowing in to battery, e.g. during charging.
+               Negative = Energy flowing out of battery, e.g. during driving.
+
+AccumulatedChargedEnergy:
+  datatype: float
+  type: sensor
+  unit: kWh
+  description: The accumulated energy delivered to the battery during charging over lifetime of the battery.
+
+AccumulatedConsumedEnergy:
+  datatype: float
+  type: sensor
+  unit: kWh
+  description: The accumulated energy leaving HV battery for propulsion and auxiliary loads over lifetime of the battery.
+
+AccumulatedChargedThroughput:
+  datatype: float
+  type: sensor
+  unit: Ah
+  description: The accumulated charge throughput delivered to the battery during charging over lifetime of the battery.
+
+AccumulatedConsumedThroughput:
+  datatype: float
+  type: sensor
+  unit: Ah
+  description: The accumulated charge throughput leaving HV battery for propulsion and auxiliary loads over lifetime of the battery.
+
+PowerLoss:
+  datatype: float
+  type: sensor
+  unit: W
+  description: Electrical energy lost by power dissipation to heat inside the battery.
+
+Range:
+  datatype: uint32
+  type: sensor
+  unit: m
+  description: Remaining range in meters using only battery.
+
+TimeRemaining:
+  datatype: uint32
+  type: sensor
+  unit: s
+  description: Time remaining in seconds before the battery is empty.
+
+Charging:
+  type: branch
+  description: Properties related to battery charging.
+
+Charging.ChargeLimit:
+  datatype: uint8
+  type: actuator
+  min: 0
+  max: 100
+  default: 100
+  unit: percent
+  description: Target charge limit (state of charge) for battery.
+
+Charging.MaximumChargingCurrent:
+  type: branch
+  description: Maximum charging current that can be accepted by the system, as measured at the charging inlet.
+
+Charging.MaximumChargingCurrent.DC:
+  datatype: float
+  type: sensor
+  unit: A
+  description: Maximum DC charging current at inlet that can be accepted by the system.
+
+Charging.MaximumChargingCurrent.Phase1:
+  datatype: float
+  type: sensor
+  unit: A
+  description: Maximum AC charging current (rms) at inlet for Phase 1 that can be accepted by the system.
+
+Charging.MaximumChargingCurrent.Phase2:
+  datatype: float
+  type: sensor
+  unit: A
+  description: Maximum AC charging current (rms) at inlet for Phase 2 that can be accepted by the system.
+
+Charging.MaximumChargingCurrent.Phase3:
+  datatype: float
+  type: sensor
+  unit: A
+  description: Maximum AC charging current (rms) at inlet for Phase 3 that can be accepted by the system.
+
+Charging.ChargePortFlap:
+  deprecation: V4.1 - Replaced with Charging.IsChargePortFlapOpen
+  datatype: string
+  type: actuator
+  allowed: ['OPEN', 'CLOSED']
+  description: Status of the charge port cover(s), can potentially be controlled manually.
+               OPEN if at least one is open.
+
+Charging.IsChargePortFlapOpen:
+  datatype: boolean
+  type: actuator
+  description: Status of the charge port flap(s), can potentially be controlled manually.
+               True if at least one is open.
+
+Charging.IsChargingCableConnected:
+  datatype: boolean
+  type: sensor
+  description: Indicates if a charging cable is physically connected to the vehicle or not.
+
+Charging.IsChargingCableLocked:
+  datatype: boolean
+  type: actuator
+  description: Is charging cable locked to prevent removal.
+  comment: Locking of charging cable can be used to prevent unintentional removing during charging.
+
+Charging.ChargePlugType:
+  deprecation: V4.1 renamed to Charging.ChargePortType
+  datatype: string[]
+  type: attribute
+  allowed: [
+    'IEC_TYPE_1_AC',
+    'IEC_TYPE_2_AC',
+    'IEC_TYPE_3_AC',
+    'IEC_TYPE_4_DC',
+    'IEC_TYPE_1_CCS_DC',
+    'IEC_TYPE_2_CCS_DC',
+    'TESLA_ROADSTER',
+    'TESLA_HPWC',
+    'TESLA_SUPERCHARGER',
+    'GBT_AC',
+    'GBT_DC',
+    'OTHER'
+    ]
+  description: Type of charge plugs (charging inlet) available on the vehicle.
+               A charge plug type may occur multiple times in the list if there are multiple instances of that charge
+               plug type.
+               IEC types refer to IEC 62196,  GBT refers to  GB/T 20234.
+  comment:     A vehicle may have multiple charging inlets.
+               The signal Charging.ChargePlugPosition can be used to indicate position of the charge plug.
+               IEC_TYPE_1_AC refers to Type 1 as defined in IEC 62196-2. Also known as Yazaki or J1772 connector.
+               IEC_TYPE_2_AC refers to Type 2 as defined in IEC 62196-2. Also known as Mennekes connector.
+               IEC_TYPE_3_AC refers to Type 3 as defined in IEC 62196-2. Also known as Scame connector.
+               IEC_TYPE_4_DC refers to AA configuration as defined in IEC 62196-3. Also known as Type 4 or CHAdeMO connector.
+               IEC_TYPE_1_CCS_DC refers to EE Configuration as defined in IEC 62196-3. Also known as CCS1 or Combo1 connector.
+               IEC_TYPE_2_CCS_DC refers to FF Configuration as defined in IEC 62196-3. Also known as CCS2 or Combo2 connector.
+               TESLA_ROADSTER, TESLA_HPWC (High Power Wall Connector) and TESLA_SUPERCHARGER refer to non-standardized charging
+               inlets/methods used by Tesla.
+               GBT_AC refers to connector specified in GB/T 20234.2.
+               GBT_DC refers to connector specified in GB/T 20234.3. Also specified as BB Configuration in IEC 62196-3.
+               OTHER shall be used if the vehicle has a charging connector, but not one of the connectors listed above.
+               For additional information see https://en.wikipedia.org/wiki/IEC_62196.
+
+Charging.ChargePortType:
+  datatype: string[]
+  type: attribute
+  allowed: [
+    'IEC_TYPE_1_AC',
+    'IEC_TYPE_2_AC',
+    'IEC_TYPE_3_AC',
+    'IEC_TYPE_4_DC',
+    'IEC_TYPE_1_CCS_DC',
+    'IEC_TYPE_2_CCS_DC',
+    'TESLA_ROADSTER',
+    'TESLA_HPWC',
+    'TESLA_SUPERCHARGER',
+    'GBT_AC',
+    'GBT_DC',
+    'OTHER'
+    ]
+  description: Type of charge ports (charging inlet) available on the vehicle.
+               A charge port type may occur multiple times in the list if there are multiple instances of that charge
+               port type.
+               IEC types refer to IEC 62196,  GBT refers to  GB/T 20234.
+  comment:     A vehicle may have multiple charging ports.
+               The signal Charging.ChargePortPosition can be used to indicate position of the charge port.
+               IEC_TYPE_1_AC refers to Type 1 as defined in IEC 62196-2. Also known as Yazaki or J1772 connector.
+               IEC_TYPE_2_AC refers to Type 2 as defined in IEC 62196-2. Also known as Mennekes connector.
+               IEC_TYPE_3_AC refers to Type 3 as defined in IEC 62196-2. Also known as Scame connector.
+               IEC_TYPE_4_DC refers to AA configuration as defined in IEC 62196-3. Also known as Type 4 or CHAdeMO connector.
+               IEC_TYPE_1_CCS_DC refers to EE Configuration as defined in IEC 62196-3. Also known as CCS1 or Combo1 connector.
+               IEC_TYPE_2_CCS_DC refers to FF Configuration as defined in IEC 62196-3. Also known as CCS2 or Combo2 connector.
+               TESLA_ROADSTER, TESLA_HPWC (High Power Wall Connector) and TESLA_SUPERCHARGER refer to non-standardized charging
+               ports/methods used by Tesla.
+               GBT_AC refers to connector specified in GB/T 20234.2.
+               GBT_DC refers to connector specified in GB/T 20234.3. Also specified as BB Configuration in IEC 62196-3.
+               OTHER shall be used for charging ports not included in the list above.
+               For additional information see https://en.wikipedia.org/wiki/IEC_62196.
+
+Charging.ChargePortPosition:
+  datatype: string[]
+  type: attribute
+  allowed: ['FRONT_LEFT', 'FRONT_MIDDLE', 'FRONT_RIGHT',
+            'REAR_LEFT', 'REAR_MIDDLE', 'REAR_RIGHT',
+            'LEFT_FRONT', 'LEFT_MIDDLE', 'LEFT_REAR',
+            'RIGHT_FRONT', 'RIGHT_MIDDLE', 'RIGHT_REAR']
+  description: Location of the charge port(s).
+               First part indicates side of vehicle, second part relative position on that side.
+               If supported, the list in this attribute shall have the same length as Charging.ChargePortType,
+               and use same the relative order.
+  comment: Example - If this signal is [LEFT_FRONT, RIGHT_FRONT] and Charging.ChargePortType is
+           [IEC_TYPE_2_AC, GBT_AC] that means that there is Mennekes port on the left side of the vehicle near
+           the front, and a GB/T AC port on the right side, near the front.
+
+Charging.Mode:
+  datatype: string
+  type: actuator
+  allowed: ['DEACTIVATED', 'AUTOMATIC', 'TRIGGERED', 'TIMER', 'PROFILE', 'EXTERNAL_ENTITY', 'MANUAL', 'GRID']
+  description: Describes how the charging process is controlled.
+               DEACTIVATED means that charging and discharging is deactivated, nothing will happen if charger is connected.
+               AUTOMATIC means charging will be initiated as soon as charger is connected.
+               TRIGGERED means charging will be initiated when triggered by user.
+               TIMER means charging is timer-based.
+               PROFILE means charging is controlled by profile downloaded to vehicle.
+               EXTERNAL_ENTITY means charging/discharging is controlled by the external entity connected to the vehicle.
+               This includes GRID-controlled charging (e.g. ISO 15118), but also other cases where vehicle is
+               connected to an arbitrary load that is powered by the vehicle.
+               MANUAL means manually initiated (plug-in event, companion app, etc).
+               GRID means grid-controlled (e.g. ISO 15118).
+  deprecation: V4.1 - MANUAL and GRID are deprecated, please use AUTOMATIC/TRIGGERED or EXTERNAL_ENITY instead.
+  comment:     EXTERNAL_ENTITY is the only mode where discharge may occur.
+               The mechanism to provide a profile to the vehicle is currently not covered by VSS.
+
+Charging.IsCharging:
+  datatype: boolean
+  type: sensor
+  description: True if charging is ongoing.
+               Charging is considered to be ongoing if energy is flowing from charger to vehicle.
+
+Charging.IsDischarging:
+  datatype: boolean
+  type: sensor
+  description: True if discharging (vehicle to grid) is ongoing.
+               Discharging is considered to be ongoing if energy is flowing from vehicle to charger/grid.
+
+Charging.StartStopCharging:
+  datatype: string
+  type: actuator
+  allowed: ['START', 'STOP']
+  description: Start or stop the charging process.
+
+Charging.ChargeCurrent:
+  type: branch
+  description: Current charging current.
+
+Charging.ChargeCurrent.DC:
+  datatype: float
+  type: sensor
+  unit: A
+  description: Current DC charging current at inlet. Negative if returning energy to grid.
+
+Charging.ChargeCurrent.Phase1:
+  datatype: float
+  type: sensor
+  unit: A
+  description: Current AC charging current (rms) at inlet for Phase 1. Negative if returning energy to grid.
+
+Charging.ChargeCurrent.Phase2:
+  datatype: float
+  type: sensor
+  unit: A
+  description: Current AC charging current (rms) at inlet for Phase 2. Negative if returning energy to grid.
+
+Charging.ChargeCurrent.Phase3:
+  datatype: float
+  type: sensor
+  unit: A
+  description: Current AC charging current (rms) at inlet for Phase 3. Negative if returning energy to grid.
+
+Charging.ChargeVoltage:
+  type: branch
+  description: Current charging voltage, as measured at the charging inlet.
+
+Charging.ChargeVoltage.DC:
+  datatype: float
+  type: sensor
+  unit: V
+  description: Current DC charging voltage at charging inlet.
+
+Charging.ChargeVoltage.Phase1:
+  datatype: float
+  type: sensor
+  unit: V
+  description: Current AC charging voltage (rms) at inlet for Phase 1.
+
+Charging.ChargeVoltage.Phase2:
+  datatype: float
+  type: sensor
+  unit: V
+  description: Current AC charging voltage (rms) at inlet for Phase 2.
+
+Charging.ChargeVoltage.Phase3:
+  datatype: float
+  type: sensor
+  unit: V
+  description: Current AC charging voltage (rms) at inlet for Phase 3.
+
+Charging.AveragePower:
+  datatype: float
+  type: sensor
+  unit: kW
+  description: Average charging power of last or current charging event.
+
+Charging.MaxPower:
+  datatype: float
+  type: sensor
+  unit: kW
+  description: Maximum charging power of last or current charging event.
+
+Charging.EvseId:
+  datatype: string
+  type: sensor
+  description: EVSE charging point ID (without separators) of last or current charging event according to ISO 15118-2 Annex H.
+  comment: Length of id between 7 and 37 characters. ZZ00000 to be used if SECC cannot provide id
+
+Charging.Location:
+  type: branch
+  description: Location of last or current charging event.
+  comment: This may depending on implementation represent the location of (the charge port of) the vehicle during charging,
+           or the actual location of the charger/load connected to the vehicle.
+
+Charging.Location.Latitude:
+  datatype: double
+  type: sensor
+  min: -90
+  max: 90
+  unit: degrees
+  description: Latitude of last or current charging event in WGS 84 geodetic coordinates.
+
+Charging.Location.Longitude:
+  datatype: double
+  type: sensor
+  min: -180
+  max: 180
+  unit: degrees
+  description: Longitude of last or current charging event in WGS 84 geodetic coordinates.
+
+Charging.Location.Altitude:
+  datatype: double
+  type: sensor
+  unit: m
+  description: Altitude relative to WGS 84 reference ellipsoid of last or current charging event.
+
+Charging.PowerLoss:
+  datatype: float
+  type: sensor
+  unit: W
+  description: Electrical energy lost by power dissipation to heat inside the AC/DC converter.
+
+Charging.Temperature:
+  datatype: float
+  type: sensor
+  unit: celsius
+  description: Current temperature of AC/DC converter converting grid voltage to battery voltage.
+
+Charging.ChargeRate:
+  datatype: float
+  type: sensor
+  unit: km/h
+  description: Current charging rate, as in kilometers of range added per hour.
+
+Charging.TimeToComplete:
+  datatype: uint32
+  type: sensor
+  unit: s
+  description: The time needed for the current charging process to reach Charging.ChargeLimit.
+               0 if charging is complete or no charging process is active or planned.
+  comment: Shall consider time set by Charging.Timer.Time.
+           E.g. if charging shall start in 3 hours and 2 hours of charging is needed,
+           then Charging.TimeToComplete shall report 5 hours.
+
+Charging.Timer:
+  type: branch
+  description: Properties related to timing of battery charging sessions.
+
+Charging.Timer.Mode:
+  datatype: string
+  type: actuator
+  allowed: ['INACTIVE', 'START_TIME', 'END_TIME']
+  description: "Defines timer mode for charging:
+               INACTIVE - no timer set, charging may start as soon as battery is connected to a charger.
+               START_TIME - charging shall start at Charging.Timer.Time.
+               END_TIME - charging shall be finished (reach Charging.ChargeLimit) at Charging.Timer.Time.
+               When charging is completed the vehicle shall change mode to 'inactive' or set a new Charging.Timer.Time.
+               Charging shall start immediately if mode is 'starttime' or 'endtime' and Charging.Timer.Time is a time in the past."
+
+Charging.Timer.Time:
+  datatype: string
+  type: actuator
+  unit: iso8601
+  description: Time for next charging-related action, formatted according to ISO 8601 with UTC time zone.
+               Value has no significance if Charging.Timer.Mode is 'inactive'.
+
+DCDC:
+  type: branch
+  description: Properties related to DC/DC converter converting high voltage (from high voltage battery)
+               to vehicle low voltage (supply voltage, typically 12 Volts).
+
+DCDC.PowerLoss:
+  datatype: float
+  type: sensor
+  unit: W
+  description: Electrical energy lost by power dissipation to heat inside DC/DC converter.
+
+DCDC.Temperature:
+  datatype: float
+  type: sensor
+  unit: celsius
+  description: Current temperature of DC/DC converter converting battery high voltage
+               to vehicle low voltage (typically 12 Volts).
+
+
+#include TractionBattery/BatteryConditioning.vspec
+End of: \spec\Powertrain\TractionBattery.vspec
+Start of: \spec\Powertrain\Transmission.vspec
+# Copyright (c) 2016 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# TRANSMISSION SPECIFICATION FILE
+#
+# This vehicle specification file, included by the top level
+# root.vspec file, contains all transmission-originated signals and attributes
+#
+
+Type:
+  datatype: string
+  type: attribute
+  allowed: ['UNKNOWN', 'SEQUENTIAL', 'H', 'AUTOMATIC', 'DSG', 'CVT']
+  default: 'UNKNOWN'
+  description: Transmission type.
+
+
+GearCount:
+  datatype: int8
+  type: attribute
+  default: 0
+  description: Number of forward gears in the transmission. -1 = CVT.
+
+DriveType:
+  datatype: string
+  type: attribute
+  allowed: ['UNKNOWN', 'FORWARD_WHEEL_DRIVE', 'REAR_WHEEL_DRIVE', 'ALL_WHEEL_DRIVE']
+  default: 'UNKNOWN'
+  description: Drive type.
+
+
+#
+# Current odometer reading for the transmission
+#
+# Note that this signal refers to the distance travelled by the transmission and not the vehicle.
+# This signal might differ from Vehicle.TravelledDistance if the transmission
+# has been replaced during the lifetime of the vehicle.
+# If the transmission is moved from one vehicle to another the signal shall also include
+# distance travelled in previous vehicles.
+#
+TravelledDistance:
+  datatype: float
+  type: sensor
+  unit: km
+  description: Odometer reading, total distance travelled during the lifetime of the transmission.
+
+#
+# Current gear
+#
+CurrentGear:
+  datatype: int8
+  type: sensor
+  description: The current gear. 0=Neutral, 1/2/..=Forward, -1/-2/..=Reverse.
+
+#
+# Selected gear
+#
+SelectedGear:
+  datatype: int8
+  type: actuator
+  description: The selected gear. 0=Neutral, 1/2/..=Forward, -1/-2/..=Reverse, 126=Park, 127=Drive.
+
+IsParkLockEngaged:
+  datatype: boolean
+  type: actuator
+  description: Is the transmission park lock engaged or not. False = Disengaged. True = Engaged.
+
+IsLowRangeEngaged:
+  datatype: boolean
+  type: actuator
+  description: Is gearbox in low range mode or not. False = Normal/High range engaged. True = Low range engaged.
+  comment: The possibility to switch between low and high gear range is typically only available
+           in heavy vehicles and off-road vehicles.
+
+IsElectricalPowertrainEngaged:
+  datatype: boolean
+  type: actuator
+  description: Is electrical powertrain mechanically connected/engaged to the drivetrain or not.
+               False = Disconnected/Disengaged. True = Connected/Engaged.
+  comment: In some hybrid solutions it is possible to disconnect/disengage the electrical powertrain mechanically
+           to avoid induced voltage reaching a too high level when driving at high speed.
+
+#
+# Current mode
+#
+PerformanceMode:
+  datatype: string
+  type: actuator
+  allowed: ['NORMAL', 'SPORT', 'ECONOMY', 'SNOW', 'RAIN']
+  description: Current gearbox performance mode.
+
+
+#
+# Current gearchange mode
+#
+GearChangeMode:
+  datatype: string
+  type: actuator
+  allowed: ['MANUAL', 'AUTOMATIC']
+  description: Is the gearbox in automatic or manual (paddle) mode.
+
+
+#
+# Gearbox temperature
+#
+Temperature:
+  datatype: float
+  type: sensor
+  unit: celsius
+  description: The current gearbox temperature.
+
+
+#
+# Clutch
+#
+ClutchEngagement:
+  datatype: float
+  type: actuator
+  unit: percent
+  min: 0
+  max: 100
+  description: Clutch engagement. 0% = Clutch fully disengaged. 100% = Clutch fully engaged.
+
+ClutchWear:
+  datatype: uint8
+  type: sensor
+  unit: percent
+  max: 100
+  description: Clutch wear as a percent. 0 = no wear. 100 = worn.
+
+DiffLockFrontEngagement:
+  datatype: float
+  type: actuator
+  unit: percent
+  min: 0
+  max: 100
+  description: Front Diff Lock engagement. 0% = Diff lock fully disengaged. 100% = Diff lock fully engaged.
+
+DiffLockRearEngagement:
+  datatype: float
+  type: actuator
+  unit: percent
+  min: 0
+  max: 100
+  description: Rear Diff Lock engagement. 0% = Diff lock fully disengaged. 100% = Diff lock fully engaged.
+
+TorqueDistribution:
+  datatype: float
+  type: actuator
+  unit: percent
+  min: -100
+  max: 100
+  description: Torque distribution between front and rear axle in percent.
+               -100% = Full torque to front axle, 0% = 50:50 Front/Rear, 100% = Full torque to rear axle.
+End of: \spec\Powertrain\Transmission.vspec
+Start of: \spec\Vehicle\Battery.vspec
+# Copyright (c) 2022 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# Signals and attributes related to the low voltage battery in Vehicles
+# This is the 12 Volt or 24 Volt battery typically used for infotainment systems and to start the combustion engine
+# in traditional petrol/diesel vehecles.
+#
+
+NominalVoltage:
+  datatype: uint16
+  type: attribute
+  unit: V
+  description: Nominal Voltage of the battery.
+  comment: Nominal voltage typically refers to voltage of fully charged battery when delivering rated capacity.
+
+NominalCapacity:
+  datatype: uint16
+  type: attribute
+  unit: Ah
+  description: Nominal capacity of the low voltage battery.
+
+CurrentVoltage:
+  datatype: float
+  type: sensor
+  unit: V
+  description: Current Voltage of the low voltage battery.
+
+CurrentCurrent:
+  datatype: float
+  type: sensor
+  unit: A
+  description: Current current flowing in/out of the low voltage battery. Positive = Current flowing in to battery,
+               e.g. during charging or driving.
+               Negative = Current flowing out of battery, e.g. when using the battery to start a combustion engine.
+End of: \spec\Vehicle\Battery.vspec
+Start of: \spec\Vehicle\Connectivity.vspec
+# Copyright (c) 2022 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# Connectivity data
+#
+# This file contains signals related to connectivity between Vehicle and X (V2X).
+# Initially it contains only a single signal specifying if connectivity available.
+# May later be extended with information on type of connectivity available (e.g., Wi-Fi, Cellular), signal strength,
+# and throughput.
+#
+
+IsConnectivityAvailable:
+  datatype: boolean
+  type: sensor
+  description: Indicates if connectivity between vehicle and cloud is available.
+               True = Connectivity is available. False = Connectivity is not available.
+  comment: This signal can be used by onboard vehicle services to decide what features that
+           shall be offered to the driver, for example disable the 'check for update' button if vehicle does
+           not have connectivity.
+End of: \spec\Vehicle\Connectivity.vspec
+Start of: \spec\Vehicle\Diagnostics.vspec
+# Copyright (c) 2023 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+Diagnostics:
+  type: branch
+  description: Diagnostics data.
+
+Diagnostics.DTCCount:
+  datatype: uint8
+  type: sensor
+  description: Number of Diagnostic Trouble Codes (DTC)
+
+Diagnostics.DTCList:
+  datatype: string[]
+  type: sensor
+  description: List of currently active DTCs formatted according OBD II (SAE-J2012DA_201812) standard ([P|C|B|U]XXXXX )
+End of: \spec\Vehicle\Diagnostics.vspec
+Start of: \spec\Vehicle\Exterior.vspec
+# Copyright (c) 2022 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+AirTemperature:
+  datatype: float
+  type: sensor
+  unit: celsius
+  description: Air temperature outside the vehicle.
+
+Humidity:
+  datatype: float
+  type: sensor
+  unit: percent
+  min: 0
+  max: 100
+  description: Relative humidity outside the vehicle.
+               0 = Dry, 100 = Air fully saturated.
+
+LightIntensity:
+  datatype: float
+  type: sensor
+  unit: percent
+  min: 0
+  max: 100
+  description: Light intensity outside the vehicle.
+               0 = No light detected, 100 = Fully lit.
+  comment: Mapping to physical units and calculation method is sensor specific.
+End of: \spec\Vehicle\Exterior.vspec
+Start of: \spec\Vehicle\Occupant.vspec
+# Copyright (c) 2020 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# Occupant data
+#
+
+Identifier:
+  type: branch
+  description: Identifier attributes based on OAuth 2.0.
+#include ../include/Identifier.vspec Identifier
+
+HeadPosition:
+  type: branch
+  description: The current position of the driver head on vehicle axis according to ISO 23150:2023.
+#include Occupant/HeadPosition.vspec HeadPosition
+
+MidEyeGaze:
+  type: branch
+  description: Direction from mid eye position to object driver is looking at.
+#include Occupant/MidEyeGaze.vspec MidEyeGaze
+End of: \spec\Vehicle\Occupant.vspec
+Start of: \spec\Vehicle\Service.vspec
+# Copyright (c) 2021 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# Service data
+#
+# This file contains signals relevant for service/maintenance of the vehicle,
+# giving information on when service is needed.
+# As of now VSS does not make any assumptions on what is included in a "service".
+# A "service" is anything that needs to be done by a technician at a garage.
+# It can include e.g. inspection, lubrication as well as replacement of fluids or other parts.
+#
+# For TimeToService int32 and seconds are used, allowing service intervals of up to
+# 68 years to be represented.
+#
+# The signals support negative values, but use of negative values are optional.
+# Once a signal reach 0 (i.e. vehicle is due for service) the vehicle might
+# either stop decreasing the signal, or continue decreasing using negative values
+# to indicate overdue distance/time.
+#
+
+#
+# Service Due Indicator
+# Indicates that it is now or in the near future time to bring the vehicle to a garage for service (of any kind).
+# The criteria for setting "ServiceDue" is not specified by VSS.
+# It may, but do not need to, be based on DistanceToService and TimeToService.
+#
+IsServiceDue:
+  datatype: boolean
+  type: sensor
+  description: Indicates if vehicle needs service (of any kind). True = Service needed now or in the near future. False = No known need for service.
+
+#
+# Remaining distance to service (of any kind).
+#
+DistanceToService:
+  datatype: float
+  type: sensor
+  unit: km
+  description: Remaining distance to service (of any kind). Negative values indicate service overdue.
+
+#
+# Remaining time to service (of any kind).
+#
+TimeToService:
+  datatype: int32
+  type: sensor
+  unit: s
+  description: Remaining time to service (of any kind). Negative values indicate service overdue.
+End of: \spec\Vehicle\Service.vspec
+Start of: \spec\Vehicle\Vehicle.vspec
+# Copyright (c) 2016 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# Highlevel vehicle signals and attributes.
+#
+
+#
+# VSS Versioning information
+#
+
+VersionVSS:
+  type: branch
+  description: Supported Version of VSS.
+
+VersionVSS.Major:
+  datatype: uint32
+  type: attribute
+  default: 5
+  description: Supported Version of VSS - Major version.
+
+VersionVSS.Minor:
+  datatype: uint32
+  type: attribute
+  default: 0
+  description: Supported Version of VSS - Minor version.
+
+VersionVSS.Patch:
+  datatype: uint32
+  type: attribute
+  default: 0
+  description: Supported Version of VSS - Patch version.
+
+VersionVSS.Label:
+  datatype: string
+  type: attribute
+  default: 'dev'
+  description: Label to further describe the version.
+  comment: COVESA VSS project typically use dev for latest master, and empty string for released versions.
+
+#
+# Vehicle identification attributes.
+#
+
+VehicleIdentification:
+  type: branch
+  description: Attributes that identify a vehicle.
+
+VehicleIdentification.VIN:
+  datatype: string
+  type: attribute
+  description: 17-character Vehicle Identification Number (VIN) as defined by ISO 3779.
+
+VehicleIdentification.WMI:
+  datatype: string
+  type: attribute
+  description: 3-character World Manufacturer Identification (WMI) as defined by ISO 3780.
+
+VehicleIdentification.Brand:
+  datatype: string
+  type: attribute
+  description: Vehicle brand or manufacturer.
+
+VehicleIdentification.Model:
+  datatype: string
+  type: attribute
+  description: Vehicle model.
+
+VehicleIdentification.Year:
+  datatype: uint16
+  type: attribute
+  description: Model year of the vehicle.
+
+
+#
+# Imports from https://schema.org/Car
+# Names from https://schema.org/Car reused, but first character capitalized
+# Example: Original schema.org name: https://schema.org/acrissCode
+#          Name used in VSS: VehicleIdentification.AcrissCode
+# Note: Only a subset of the properties from https://schema.org/Car have been imported.
+
+VehicleIdentification.AcrissCode:
+  datatype: string
+  type: attribute
+  description: The ACRISS Car Classification Code is a code used by many car rental companies.
+
+VehicleIdentification.BodyType:
+  datatype: string
+  type: attribute
+  description: Indicates the design and body style of the vehicle (e.g. station wagon, hatchback, etc.).
+
+VehicleIdentification.DateVehicleFirstRegistered:
+  datatype: string
+  type: attribute
+  unit: iso8601
+  description: The date in ISO 8601 format of the first registration of the vehicle with the respective public authorities.
+
+VehicleIdentification.LicensePlate:
+  datatype: string
+  type: attribute
+  description: The license plate of the vehicle.
+  comment: Depending on the context, this attribute might not be up to date or might be misconfigured, and therefore should be considered untrustworthy in the absence of another method of verification.
+
+VehicleIdentification.MeetsEmissionStandard:
+  datatype: string
+  type: attribute
+  description: Indicates that the vehicle meets the respective emission standard.
+
+VehicleIdentification.ProductionDate:
+  datatype: string
+  type: attribute
+  unit: iso8601
+  description: The date in ISO 8601 format of production of the item, e.g. vehicle.
+
+VehicleIdentification.PurchaseDate:
+  datatype: string
+  type: attribute
+  unit: iso8601
+  description: The date in ISO 8601 format of the item e.g. vehicle was purchased by the current owner.
+
+VehicleIdentification.VehicleModelDate:
+  datatype: string
+  type: attribute
+  unit: iso8601
+  description: The release date in ISO 8601 format of a vehicle model (often used to differentiate versions of the same make and model).
+
+VehicleIdentification.VehicleConfiguration:
+  datatype: string
+  type: attribute
+  description: A short text indicating the configuration of the vehicle, e.g. '5dr hatchback ST 2.5 MT 225 hp' or 'limited edition'.
+
+VehicleIdentification.VehicleSeatingCapacity:
+  datatype: uint16
+  type: attribute
+  description: The number of passengers that can be seated in the vehicle, both in terms of the physical space available, and in terms of limitations set by law.
+
+VehicleIdentification.VehicleSpecialUsage:
+  datatype: string
+  type: attribute
+  description: Indicates whether the vehicle has been used for special purposes, like commercial rental, driving school.
+
+VehicleIdentification.VehicleExteriorColor:
+  datatype: string
+  type: attribute
+  description: The main color of the exterior within the basic color palette (eg. red, blue, black, white, ...).
+
+VehicleIdentification.VehicleInteriorColor:
+  datatype: string
+  type: attribute
+  description: The color or color combination of the interior of the vehicle.
+
+VehicleIdentification.VehicleInteriorType:
+  datatype: string
+  type: attribute
+  description: The type or material of the interior of the vehicle (e.g. synthetic fabric, leather, wood, etc.).
+
+VehicleIdentification.KnownVehicleDamages:
+  datatype: string
+  type: attribute
+  description: A textual description of known damages, both repaired and unrepaired.
+
+VehicleIdentification.OptionalExtras:
+  datatype: string[]
+  type: attribute
+  description: Optional extras refers to all car equipment options that are not installed as standard by the manufacturer.
+  comment: Allowed values are not standardized, each OEM can specify detail descriptions of array elements.
+#
+# Vehicle signals
+#
+
+LowVoltageSystemState:
+  datatype: string
+  type: sensor
+  allowed: [
+    'UNDEFINED', # State of low voltage system not known
+    'LOCK',      # Low voltage system off, steering lock or equivalent engaged
+    'OFF',       # Low voltage system off, steering lock or equivalent not engaged
+    'ACC',       # Vehicle Accessories on/living
+    'ON',        # Engine start enabled (e.g. ignition on, diesel pre-heating, electrical drive released)
+    'START'      # Engine starter relay closed (not applicable for electrical vehicles)
+    ]
+  description: State of the supply voltage of the control units (usually 12V).
+
+##
+#  Low voltage battery
+##
+LowVoltageBattery:
+  type: branch
+  description: Signals related to low voltage battery.
+
+#include Battery.vspec LowVoltageBattery
+
+
+Speed:
+  datatype: float
+  type: sensor
+  unit: km/h
+  description: Vehicle speed.
+
+TraveledDistance:
+  datatype: float
+  type: sensor
+  unit: km
+  description: Odometer reading, total distance traveled during the lifetime of the vehicle.
+
+TraveledDistanceSinceStart:
+  datatype: float
+  type: sensor
+  unit: km
+  description: Distance traveled since start of current trip.
+  comment: A new trip is considered to start when engine gets enabled (e.g. LowVoltageSystemState in ON or START mode).
+           A trip is considered to end when engine is no longer enabled.
+           The signal may however keep the value of the last trip until a new trip is started.
+
+StartTime:
+  datatype: string
+  type: attribute
+  default: '0000-01-01T00:00Z'
+  unit: iso8601
+  description: Start time of current or latest trip, formatted according to ISO 8601 with UTC time zone.
+  comment: This signal is supposed to be set whenever a new trip starts.
+           A new trip is considered to start when engine gets enabled (e.g. LowVoltageSystemState in ON or START mode).
+           A trip is considered to end when engine is no longer enabled.
+           The default value indicates that the vehicle never has been started, or that latest start time is unknown.
+
+TripDuration:
+  datatype: float
+  type: sensor
+  unit: s
+  description: Duration of latest trip.
+  comment: This signal is not assumed to be continuously updated, but instead set to 0 when a trip starts
+           and set to the actual duration of the trip when a trip ends.
+           A new trip is considered to start when engine gets enabled (e.g. LowVoltageSystemState in ON or START mode).
+           A trip is considered to end when engine is no longer enabled.
+
+TripMeterReading:
+  datatype: float
+  type: actuator
+  unit: km
+  description: Trip meter reading.
+  comment: The trip meter is an odometer that can be manually reset by the driver
+
+IsBrokenDown:
+  datatype: boolean
+  type: sensor
+  description: Vehicle breakdown or any similar event causing vehicle to stop on the road,
+               that might pose a risk to other road users.
+               True = Vehicle broken down on the road, due to e.g. engine problems, flat tire, out of gas, brake problems.
+               False = Vehicle not broken down.
+  comment: Actual criteria and method used to decide if a vehicle is broken down is implementation specific.
+
+IsMoving:
+  datatype: boolean
+  type: sensor
+  description: Indicates whether the vehicle is stationary or moving.
+
+AverageSpeed:
+  datatype: float
+  type: sensor
+  unit: km/h
+  description: Average speed for the current trip.
+  comment: A new trip is considered to start when engine gets enabled (e.g. LowVoltageSystemState in ON or START mode).
+           A trip is considered to end when engine is no longer enabled.
+           The signal may however keep the value of the last trip until a new trip is started.
+           Calculation of average speed may exclude periods when the vehicle for example is not moving or transmission is in neutral.
+
+#
+# Spatial Acceleration
+#
+Acceleration:
+  type: branch
+  description: Spatial acceleration. Axis definitions according to ISO 8855.
+
+Acceleration.Longitudinal:
+  datatype: float
+  type: sensor
+  unit: m/s^2
+  description: Vehicle acceleration in X (longitudinal acceleration).
+
+Acceleration.Lateral:
+  datatype: float
+  type: sensor
+  unit: m/s^2
+  description: Vehicle acceleration in Y (lateral acceleration).
+
+Acceleration.Vertical:
+  datatype: float
+  type: sensor
+  unit: m/s^2
+  description: Vehicle acceleration in Z (vertical acceleration).
+
+
+#
+# Spatial Rotation
+#
+AngularVelocity:
+  type: branch
+  description: Spatial rotation. Axis definitions according to ISO 8855.
+
+AngularVelocity.Roll:
+  datatype: float
+  type: sensor
+  unit: degrees/s
+  description: Vehicle rotation rate along X (longitudinal).
+
+AngularVelocity.Pitch:
+  datatype: float
+  type: sensor
+  unit: degrees/s
+  description: Vehicle rotation rate along Y (lateral).
+
+AngularVelocity.Yaw:
+  datatype: float
+  type: sensor
+  unit: degrees/s
+  description: Vehicle rotation rate along Z (vertical).
+
+#
+# Schema from schema.org
+#
+
+RoofLoad:
+  datatype: int16
+  type: attribute
+  unit: kg
+  description: The permitted total weight of cargo and installations (e.g. a roof rack) on top of the vehicle.
+
+CargoVolume:
+  datatype: float
+  type: attribute
+  unit: l
+  description: The available volume for cargo or luggage. For automobiles, this is usually the trunk volume.
+  min: 0
+
+EmissionsCO2:
+  datatype: int16
+  type: attribute
+  description: The CO2 emissions.
+  unit: g/km
+
+
+#
+# Vehicle Weight and Dimension attributes
+#
+
+CurrentOverallWeight:
+  datatype: uint16
+  type: sensor
+  unit: kg
+  description: Current overall Vehicle weight. Including passengers, cargo and other load inside the car.
+
+CurbWeight:
+  datatype: uint16
+  type: attribute
+  default: 0
+  unit: kg
+  description: Vehicle curb weight, including all liquids and full tank of fuel, but no cargo or passengers.
+
+GrossWeight:
+  datatype: uint16
+  type: attribute
+  default: 0
+  unit: kg
+  description: Curb weight of vehicle, including all liquids and full tank of fuel and full load of cargo and passengers.
+
+MaxTowWeight:
+  datatype: uint16
+  type: attribute
+  default: 0
+  unit: kg
+  description: Maximum weight of trailer.
+
+MaxTowBallWeight:
+  datatype: uint16
+  type: attribute
+  default: 0
+  unit: kg
+  description: Maximum vertical weight on the tow ball of a trailer.
+
+Length:
+  datatype: uint16
+  type: attribute
+  default: 0
+  unit: mm
+  description: Overall vehicle length.
+
+Height:
+  datatype: uint16
+  type: attribute
+  default: 0
+  unit: mm
+  description: Overall vehicle height.
+
+Width:
+  deprecation: v4.1 replaced with WidthExcludingMirrors and WidthIncludingMirrors
+  datatype: uint16
+  type: attribute
+  default: 0
+  unit: mm
+  description: Overall vehicle width.
+
+WidthExcludingMirrors:
+  datatype: uint16
+  type: attribute
+  default: 0
+  unit: mm
+  description: Overall vehicle width excluding mirrors, as defined by SAE J1100-2009 W103.
+
+WidthIncludingMirrors:
+  datatype: uint16
+  type: attribute
+  unit: mm
+  description: Overall vehicle width including mirrors, as defined by SAE J1100-2009 W144.
+
+WidthFoldedMirrors:
+  datatype: uint16
+  type: attribute
+  unit: mm
+  description: Overall vehicle width with mirrors folded, as defined by SAE J1100-2009 W145.
+
+TurningDiameter:
+  datatype: uint16
+  type: attribute
+  unit: mm
+  description: Minimum turning diameter, Wall-to-Wall, as defined by SAE J1100-2009 D102.
+
+#
+# Trailer
+#
+Trailer:
+  type: branch
+  description: Trailer signals.
+
+Trailer.IsConnected:
+  datatype: boolean
+  type: sensor
+  description: Signal indicating if trailer is connected or not.
+
+#
+# Location
+#
+
+CurrentLocation:
+  type: branch
+  description: The current latitude and longitude of the vehicle.
+
+CurrentLocation.Timestamp:
+  datatype: string
+  type: sensor
+  unit: iso8601
+  description: Timestamp from GNSS system for current location, formatted according to ISO 8601 with UTC time zone.
+
+CurrentLocation.Latitude:
+  datatype: double
+  type: sensor
+  min: -90
+  max: 90
+  unit: degrees
+  description: Current latitude of vehicle in WGS 84 geodetic coordinates, as measured at the position of GNSS receiver antenna.
+
+CurrentLocation.Longitude:
+  datatype: double
+  type: sensor
+  min: -180
+  max: 180
+  unit: degrees
+  description: Current longitude of vehicle in WGS 84 geodetic coordinates, as measured at the position of GNSS receiver antenna.
+
+CurrentLocation.Heading:
+  datatype: double
+  type: sensor
+  min: 0
+  max: 360
+  unit: degrees
+  description: Current heading relative to geographic north.
+               0 = North, 90 = East, 180 = South, 270 = West.
+
+CurrentLocation.HorizontalAccuracy:
+  datatype: double
+  type: sensor
+  unit: m
+  description: Accuracy of the latitude and longitude coordinates.
+
+CurrentLocation.Altitude:
+  datatype: double
+  type: sensor
+  unit: m
+  description: Current altitude relative to WGS 84 reference ellipsoid, as measured at the position of GNSS receiver antenna.
+
+CurrentLocation.VerticalAccuracy:
+  datatype: double
+  type: sensor
+  unit: m
+  description: Accuracy of altitude.
+
+CurrentLocation.GNSSReceiver:
+  type: branch
+  description: Information on the GNSS receiver used for determining current location.
+
+CurrentLocation.GNSSReceiver.FixType:
+  datatype: string
+  type: sensor
+  allowed: ['NONE',
+            'TWO_D',
+            'TWO_D_SATELLITE_BASED_AUGMENTATION',
+            'TWO_D_GROUND_BASED_AUGMENTATION',
+            'TWO_D_SATELLITE_AND_GROUND_BASED_AUGMENTATION',
+            'THREE_D',
+            'THREE_D_SATELLITE_BASED_AUGMENTATION',
+            'THREE_D_GROUND_BASED_AUGMENTATION',
+            'THREE_D_SATELLITE_AND_GROUND_BASED_AUGMENTATION']
+  description: Fix status of GNSS receiver.
+
+CurrentLocation.GNSSReceiver.MountingPosition:
+  type: branch
+  description: Mounting position of GNSS receiver antenna relative to vehicle coordinate system.
+               Axis definitions according to ISO 8855. Origin at center of (first) rear axle.
+
+CurrentLocation.GNSSReceiver.MountingPosition.X:
+  datatype: int16
+  type: attribute
+  unit: mm
+  description: Mounting position of GNSS receiver antenna relative to vehicle coordinate system.
+               Axis definitions according to ISO 8855. Origin at center of (first) rear axle.
+               Positive values = forward of rear axle. Negative values = backward of rear axle.
+
+CurrentLocation.GNSSReceiver.MountingPosition.Y:
+  datatype: int16
+  type: attribute
+  unit: mm
+  description: Mounting position of GNSS receiver antenna relative to vehicle coordinate system.
+               Axis definitions according to ISO 8855. Origin at center of (first) rear axle.
+               Positive values = left of origin. Negative values = right of origin.
+               Left/Right is as seen from driver perspective, i.e. by a person looking forward.
+
+CurrentLocation.GNSSReceiver.MountingPosition.Z:
+  datatype: int16
+  type: attribute
+  unit: mm
+  description: Mounting position of GNSS receiver on Z-axis.
+               Axis definitions according to ISO 8855. Origin at center of (first) rear axle.
+               Positive values = above center of rear axle. Negative values = below center of rear axle.
+
+#include include/PowerOptimize.vspec
+End of: \spec\Vehicle\Vehicle.vspec
+Start of: \spec\Cabin\Seat\Occupant.vspec
+# Copyright (c) 2020 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+#
+# Occupant data
+#
+
+Identifier:
+  deprecation: v5.0 - use data from Vehicle.Occupant.*.*.Identifier.
+  type: branch
+  description: Identifier attributes based on OAuth 2.0.
+
+Identifier.Subject:
+  deprecation: v5.0 - use data from Vehicle.Occupant.*.*.Identifier.
+  datatype: string
+  type: sensor
+  description: Subject for the authentication of the occupant e.g. UserID 7331677.
+
+Identifier.Issuer:
+  deprecation: v5.0 - use data from Vehicle.Occupant.*.*.Identifier.
+  datatype: string
+  type: sensor
+  description: Unique Issuer for the authentication of the occupant e.g. https://accounts.funcorp.com.
+End of: \spec\Cabin\Seat\Occupant.vspec
+Start of: \spec\Powertrain\TractionBattery\BatteryConditioning.vspec
+# Copyright (c) 2023 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+############# Battery Conditioning Feature ##########################
+#
+# It may be beneficial to heat or cool a traction battery as preparation for
+# charging or driving, as that could reduce time needed for charging or could
+# improve battery performance. This file specifies signals that could be used for
+# a battery condition feature.
+#
+# VSS does not specify business logic for battery conditioning but a possible usage
+# of the signals could be like this:
+#
+# 1. The vehicle user specifies upcoming mode (Driving/Charging) and TargetTime,
+#    i.e the time for planned departure or when charging likely will start.
+# 2. Based on this and other factors like current battery temperature and outside temperature
+#    the battery condition system (onboard or offboard) calculates
+#    StartTime and wanted TargetTemperature.
+# 3. At StartTime the system is woken up (if not already awake), checks settings and if needed
+#    and feasible starts heating/cooling.
+# 4. When TargetTemperature is reached (possibly allowing range, like +-X degrees)
+#    the system will keep temperature within allowed range.
+# 5. At TargetTime, or possibly when other conditions occur like charging started or trip started,
+#    the system will be deactivated.
+
+BatteryConditioning:
+  type: branch
+  description: Properties related to preparing the vehicle battery for charging or driving.
+
+BatteryConditioning.IsActive:
+  datatype: boolean
+  type: sensor
+  description: Indicates if battery conditioning is active (i.e. actively monitors battery temperature).
+               True = Active. False = Inactive.
+  comment: This signal is typically true when mode is not INACTIVE and time is within defined
+           start/end times.
+
+BatteryConditioning.IsOngoing:
+  datatype: boolean
+  type: sensor
+  description: Indicating if battery conditioning is currently ongoing.
+               Battery conditioning is considered ongoing when the battery conditioning system
+               is actively heating or cooling the battery, or requesting heating or cooling.
+  comment: When battery conditioning is active, but temperature is already within acceptable range so that
+           no cooling or heating is needed then IsOngoing shall report False.
+
+BatteryConditioning.RequestedMode:
+  datatype: string
+  type: actuator
+  allowed: ['INACTIVE', 'FAST_CHARGING_PREPARATION', 'DRIVING_PREPARATION']
+  description: Defines requested mode for battery conditioning.
+               INACTIVE - Battery conditioning inactive.
+               FAST_CHARGING_PREPARATION - Battery conditioning for fast charging.
+               DRIVING_PREPARATION - Battery conditioning for driving.
+  comment: The Mode and TargetTime can be used to calculate TargetTemperature and StartTime
+
+BatteryConditioning.StartTime:
+  type: actuator
+  datatype: string
+  description: Start time for battery conditioning,
+               formatted according to ISO 8601 with UTC time zone.
+  unit: iso8601
+  comment: If the vehicle is asleep, this is the time the vehicle and the battery conditioning system must wake up
+          and start monitoring the battery and if necessary start heating/cooling of the battery.
+
+BatteryConditioning.TargetTime:
+  type: actuator
+  datatype: string
+  description: Target time when conditioning shall be finished, formatted according to ISO 8601 with UTC time zone.
+  unit: iso8601
+  comment: For FAST_CHARGING mode this is typically the time when charging is supposed to start.
+           For DRIVING mode this is typically the expected departure time.
+           Battery conditioning will be deactivated when this time has passed.
+
+BatteryConditioning.TargetTemperature:
+  datatype: float
+  type: actuator
+  unit: celsius
+  description: Target temperature for battery conditioning.
+  comment: Target temperature possibly differs between different modes as well as other factors.
+           Allowed deviation from target temperature is implementation dependent.
+End of: \spec\Powertrain\TractionBattery\BatteryConditioning.vspec
+Start of: \spec\Vehicle\Occupant\HeadPosition.vspec
+# Copyright (c) 2024 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+# This file intends to provide data related to head position.
+#
+# As specified in "Euro NCAP - Assessment Protocol - Safety Assist" section 3.5.3.1
+# (https://www.euroncap.com/media/80158/euro-ncap-assessment-protocol-sa-safe-driving-v104.pdf)
+# Head Movement (Owl) can be used to assess detection of driver distraction.
+#
+# Head position in this file refers to mid eye position.
+# Mid eye position refers to the center of a line drawn between the drivers eyes.
+# Absence of an eye does not affect mid eye position, as it shall be calculated as if both eyes were present.
+#
+# Position is given in the vehicle rear-axle coordinate system as defined by ISO 23150:2023 section 3.7.12
+# This coordinate system corresponds to a vehicle coordinate system as defined by ISO 8855:2011 section 2.11
+# with the vehicle reference point at centre of the (first) rear axle.
+#
+# With the definitions given below example values for a regular LHD passenger vehicle
+# could be something like
+#           X = 2000 mm (head position 2 meters in front of rear axle)
+#           Y = 600 mm (head position 60 cm left of vehicle center)
+#           Z = 1000 mm (head position 100 cm above center of rear axis)
+#
+# Head Roll/Pitch/Yaw refers to relationship between head axis system and the vehicle rear-axle coordinate system.
+#
+# Head axis system is defined as follows
+# Head X-axis corresponds to a vector from midway between left and right pre-auricular point and nasion.
+# Head Y-axis corresponds to a vector orthogonal to X going left from the head on the plane defined by left and right
+# pre-auricular point and nasion.
+# Head Z-axis corresponds to vector orthogonal to X and Y going upward.
+#
+
+X:
+  datatype: int16
+  type: sensor
+  unit: mm
+  description: Longitudinal position of head center measured as mid eye position on X-axis
+               of the vehicle rear-axle coordinate system as defined by ISO 23150:2023 section 3.7.12
+               Mid eye position refers to the center of a line drawn between the center of the drivers eyes.
+               Positive values = forward of (first) rear-axle. Negative values = backward of (first) rear-axle.
+
+Y:
+  datatype: int16
+  type: sensor
+  unit: mm
+  description: Lateral position of head center measured as mid eye position on X-axis
+               of the vehicle rear-axle coordinate system as defined by ISO 23150:2023 section 3.7.12
+               Mid eye position refers to the center of a line drawn between the center of the drivers eyes.
+               Positive values = left of rear-axle center. Negative values = right of rear-axle center.
+
+Z:
+  datatype: int16
+  type: sensor
+  unit: mm
+  description: Height position of head center measured as mid eye position on X-axis
+               of the vehicle rear-axle coordinate system as defined by ISO 23150:2023 section 3.7.12
+               Mid eye position refers to the center of a line drawn between the center of the drivers eyes.
+               Positive values = above center of rear-axle reference point.
+               Negative values = below center of rear-axle reference point.
+
+Yaw:
+  datatype: float
+  type: sensor
+  unit: degrees
+  min: -180
+  max: 180
+  description: Head yaw angle, measured from the vehicle sprung mass X-axis as defined by ISO 23150:2023
+               to the head X-axis, around the vehicle Z-axis (right-hand rule).
+               0 = Head in normal position.
+               Positive values = Head turned left. Negative values = Head turned right.
+
+Pitch:
+  datatype: float
+  type: sensor
+  unit: degrees
+  min: -90
+  max: 90
+  description: Head pitch angle, measured as angle from vehicle sprung mass XY-plane as defined by ISO 23150:2023
+               to the head X-axis.
+               0 = Head in normal position.
+               Positive values = Head leaning up. Negative values = Head leaning down.
+Roll:
+  datatype: float
+  type: sensor
+  unit: degrees
+  min: -180
+  max: 180
+  description: Head roll angle about the head X-axis (right-hand rule).
+               0 = Head in normal position.
+               Positive values = Head leaning to the right. Negative values = Head leaning to the left.
+End of: \spec\Vehicle\Occupant\HeadPosition.vspec
+Start of: \spec\Vehicle\Occupant\MidEyeGaze.vspec
+# Copyright (c) 2024 Contributors to COVESA
+#
+# This program and the accompanying materials are made available under the
+# terms of the Mozilla Public License 2.0 which is available at
+# https://www.mozilla.org/en-US/MPL/2.0/
+#
+# SPDX-License-Identifier: MPL-2.0
+
+# This file intends to provide data related to mid eye gaze.
+#
+# As specified in "Euro NCAP - Assessment Protocol - Safety Assist" section 3.5.3.1
+# (https://www.euroncap.com/media/80158/euro-ncap-assessment-protocol-sa-safe-driving-v104.pdf)
+# Eye Movement (Lizard) can be used to assess detection of driver distraction.
+#
+# Mid eye position refers to the center of a line drawn between the drivers eyes.
+# Absence of an eye does not affect mid eye position, as it shall be calculated as if both eyes were present.
+#
+# Gaze refers to the direction to the object the driver is looking at measured from
+# mid eye position.
+# Axis definitions correspond to the vehicle rear-axle coordinate system as defined by ISO 23150:2023 section 3.7.12
+#
+# Some examples (at long distance from vehicle)
+#            Object in front of vehicle (at far distance) - Azimuth==0, Elevation == 0
+#            Object to the left of vehicle (at far distance) - Azimuth==90, Elevation == 0
+#            Object to the right of vehicle (at far distance)- Azimuth==-90, Elevation == 0
+#            Object behind the vehicle (at far distance) - Azimuth==180 or -180, Elevation == 0
+#            Object right above the vehicle (at height) - Azimuth==<any>, Elevation == 90
+#            Object deep down below the vehicle - Azimuth==<any>, Elevation == -90
+
+Azimuth:
+  datatype: float
+  type: sensor
+  unit: degrees
+  min: -180
+  max: 180
+  description: Mid eye azimuth gaze (right-hand rule) on vehicle sprung mass Z-axis as defined by ISO 23150:2023
+               0 = Driver looking forward.
+               Positive values = Driver looking at something on the left side of driver.
+               Negative values = Driver looking at something on the right side of driver.
+
+Elevation:
+  datatype: float
+  type: sensor
+  unit: degrees
+  min: -90
+  max: 90
+  description: Elevation to observed object measured
+               as angle between vehicle sprung mass XY-plane as defined by ISO 23150:2023
+               at driver mid eye position and object.
+               0 = Driver looking at something at same height as mid eye position.
+               Positive values = Driver looking at something above mid eye position.
+               Negative values = Driver looking at something below mid eye position.
+End of: \spec\Vehicle\Occupant\MidEyeGaze.vspec

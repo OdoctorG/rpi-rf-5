@@ -1,0 +1,119 @@
+{
+   "description": "COVESA VSS mapping information",
+   "formatVersion": "0.1.0",
+   "scripts_location": "scripts",
+   "simple_mapping": {
+      "Vehicle.Powertrain.TractionBattery.AccumulatedChargedEnergy": {
+         "namespace": "VehicleBus",
+         "name": "ID3D2TotalChargeDischarge.TotalChargeKWh3D2"
+      },
+      "Vehicle.Powertrain.TractionBattery.AccumulatedConsumedEnergy": {
+         "namespace": "VehicleBus",
+         "name": "ID3D2TotalChargeDischarge.TotalDischargeKWh3D2"
+      },
+      "Vehicle.Exterior.AirTemperature": {
+         "namespace": "VehicleBus",
+         "name": "ID321VCFRONT_sensors.VCFRONT_tempAmbientFiltered"
+      },
+      "Vehicle.Exterior.Humidity": {
+         "namespace": "VehicleBus",
+         "name": "ID383VCRIGHT_thsStatus.VCRIGHT_thsHumidity"
+      },
+      "Vehicle.TraveledDistance": {
+         "namespace": "ChassisBus",
+         "name": "ID3F3UI_odo.UI_odometer"
+      },
+      "Vehicle.Speed": {
+         "namespace": "VehicleBus",
+         "name": "ID257DIspeed.DI_vehicleSpeed"
+      },
+      "Vehicle.Acceleration.Longitudinal" : {
+         "namespace": "ChassisBus",
+         "name": "ID111RCM_inertial2.RCM_longitudinalAccel"
+      },
+      "Vehicle.Acceleration.Lateral" : {
+         "namespace": "ChassisBus",
+         "name": "ID111RCM_inertial2.RCM_lateralAccel"
+      },
+      "Vehicle.Acceleration.Vertical" : {
+         "namespace": "ChassisBus",
+         "name": "ID111RCM_inertial2.RCM_verticalAccel"
+      },
+      "Vehicle.Chassis.Accelerator.PedalPosition": {
+         "namespace": "VehicleBus",
+         "name": "ID118DriveSystemStatus.DI_accelPedalPos"
+      },
+      "Vehicle.Powertrain.Transmission.CurrentGear": {
+         "namespace": "VehicleBus",
+         "name": "ID118DriveSystemStatus.DI_gear"
+      },
+      "Vehicle.Powertrain.TractionBattery.StateOfCharge.CurrentEnergy" : {
+         "namespace" : "VehicleBus",
+         "name" : "ID352BMS_energyStatus.BMS_nominalEnergyRemaining"
+      },
+      "Vehicle.Powertrain.TractionBattery.GrossCapacity" : {
+         "namespace" : "VehicleBus",
+         "name" : "ID292BMS_SOC.BattBeginningOfLifeEnergy292"
+      },
+      "Vehicle.Powertrain.TractionBattery.NetCapacity" : {
+         "namespace" : "VehicleBus",
+         "name" : "ID352BMS_energyStatus.BMS_nominalFullPackEnergy"
+      },
+      "Vehicle.Powertrain.TractionBattery.CurrentCurrent" : {
+         "namespace" : "VehicleBus",
+         "name" : "ID132HVBattAmpVolt.RawBattCurrent132"
+      },
+      "Vehicle.Powertrain.TractionBattery.CurrentVoltage" : {
+         "namespace" : "VehicleBus",
+         "name" : "ID132HVBattAmpVolt.BattVoltage132"
+      },
+      "Vehicle.Powertrain.TractionBattery.Temperature.Min" : {
+         "namespace" : "VehicleBus",
+         "name" : "ID312BMSthermal.BMSminPackTemperature"
+      },
+      "Vehicle.Powertrain.TractionBattery.Temperature.Max" : {
+         "namespace" : "VehicleBus",
+         "name" : "ID312BMSthermal.BMSmaxPackTemperature"
+      },
+      "Vehicle.CurrentLocation.Longitude": {
+         "namespace": "ChassisBus",
+         "name": "ID04FGPSLatLong.GPSLongitude04F"
+      },
+      "Vehicle.CurrentLocation.Latitude": {
+         "namespace": "ChassisBus",
+         "name": "ID04FGPSLatLong.GPSLatitude04F"
+      },
+      "Vehicle.CurrentLocation.HorizontalAccuracy": {
+         "namespace": "ChassisBus",
+         "name": "ID04FGPSLatLong.GPSAccuracy04F"
+      },
+      "Vehicle.Powertrain.EngineCoolant.Temperature": {
+         "namespace": "VehicleBus",
+         "name": "ID321VCFRONT_sensors.VCFRONT_tempCoolantPTInlet"
+      },
+      "Vehicle.Powertrain.ElectricMotor.Speed": {
+         "namespace": "VehicleBus",
+         "name": "ID186DIF_torque.DIF_axleSpeed"
+      },
+      "Vehicle.Chassis.Axle.Row1.Wheel.Left.Speed": {
+         "namespace": "ChassisBus",
+         "name": "ID175WheelSpeed.WheelSpeedFL175"
+      },
+      "Vehicle.Chassis.Axle.Row1.Wheel.Right.Speed": {
+         "namespace": "ChassisBus",
+         "name": "ID175WheelSpeed.WheelSpeedFR175"
+      },
+      "Vehicle.Chassis.Axle.Row2.Wheel.Left.Speed": {
+         "namespace": "ChassisBus",
+         "name": "ID175WheelSpeed.WheelSpeedRL175"
+      },
+      "Vehicle.Chassis.Axle.Row2.Wheel.Right.Speed": {
+         "namespace": "ChassisBus",
+         "name": "ID175WheelSpeed.WheelSpeedRR175"
+      },
+      "Vehicle.Cabin.AmbientAirTemperature": {
+         "namespace" : "VehicleBus",
+         "name": "ID243VCRIGHT_hvacStatus.VCRIGHT_hvacCabinTempEst"
+      }
+   }
+}

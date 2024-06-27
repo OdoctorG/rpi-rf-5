@@ -1,0 +1,11 @@
+{
+   "description": "Placeholder description",
+   "formatVersion": "0.1.0",
+   "scripts_location": "scripts",
+   "simple_mapping": {
+      "Vehicle.OBD.EngineSpeed" : {
+         "namespace": "HS1",
+         "name": "EngVehicleSpThrottle_HS1.EngAout_N_Actl"
+      }
+   }
+}                    

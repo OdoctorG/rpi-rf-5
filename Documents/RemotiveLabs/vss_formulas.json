@@ -1,0 +1,108 @@
+{
+    "Vehicle.Cabin.Door.Row1.DriverSide.IsOpen": {
+        "namespace": "VehicleBus",
+        "name": "ID3A1VCFRONT_vehicleStatus.VCFRONT_driverDoorStatus",
+        "formula": "signals['ID3A1VCFRONT_vehicleStatus.VCFRONT_driverDoorStatus'] == 0"
+    },
+    "Vehicle.Cabin.Door.Row1.PassengerSide.IsOpen": {
+        "namespace": "VehicleBus",
+        "name": "ID103VCRIGHT_doorStatus.VCRIGHT_frontLatchSwitch",
+        "formula": "signals['ID103VCRIGHT_doorStatus.VCRIGHT_frontLatchSwitch'] == 0"
+    },
+    "Vehicle.Cabin.Door.Row2.DriverSide.IsOpen": {
+        "namespace": "VehicleBus",
+        "name": "ID102VCLEFT_doorStatus.VCLEFT_rearLatchSwitch",
+        "formula": "signals['ID102VCLEFT_doorStatus.VCLEFT_rearLatchSwitch'] == 0"
+    },
+    "Vehicle.Cabin.Door.Row2.PassengerSide.IsOpen": {
+        "namespace": "VehicleBus",
+        "name": "ID103VCRIGHT_doorStatus.VCRIGHT_rearLatchSwitch",
+        "formula": "signals['ID103VCRIGHT_doorStatus.VCRIGHT_rearLatchSwitch'] == 0"
+    },
+    "Vehicle.Body.Lights.Fog.Front.Left.IsOn": {
+        "namespace": "VehicleBus",
+        "name": "ID3F5VCFRONT_lighting.VCFRONT_fogLeftStatus",
+        "formula": "signals['ID3F5VCFRONT_lighting.VCFRONT_fogLeftStatus'] == 1"
+    },
+    "Vehicle.Body.Lights.Fog.Front.Right.IsOn": {
+        "namespace": "VehicleBus",
+        "name": "ID3F5VCFRONT_lighting.VCFRONT_fogRightStatus",
+        "formula": "signals['ID3F5VCFRONT_lighting.VCFRONT_fogRightStatus'] == 1"
+    },
+    "Vehicle.Body.Lights.Running.IsOn": {
+        "namespace": "VehicleBus",
+        "name": "ID3F5VCFRONT_lighting.VCFRONT_DRLLeftStatus",
+        "formula": "signals['ID3F5VCFRONT_lighting.VCFRONT_DRLLeftStatus'] == 1"
+    },
+    "Vehicle.Body.Lights.Parking.IsOn": {
+        "namespace": "VehicleBus",
+        "name": "ID3F5VCFRONT_lighting.VCFRONT_parkLeftStatus",
+        "formula": "signals['ID3F5VCFRONT_lighting.VCFRONT_parkLeftStatus'] == 1"
+    },
+    "Vehicle.Body.Trunk.Rear.IsOpen": {
+        "namespace": "VehicleBus",
+        "name": "ID103VCRIGHT_doorStatus.VCRIGHT_trunkLatchStatus",
+        "formula": "signals['ID103VCRIGHT_doorStatus.VCRIGHT_trunkLatchStatus'] == 1"
+    },
+    "Vehicle.Body.Trunk.Front.IsOpen": {
+        "namespace": "VehicleBus",
+        "name": "ID2E1VCFRONT_status.VCFRONT_frunkLatchStatus",
+        "formula": "signals['ID2E1VCFRONT_status.VCFRONT_frunkLatchStatus'] == 1"
+    },
+    "Vehicle.Body.Raindetection.Intensity": {
+        "namespace": "ChassisBus",
+        "name": "ID25BAPP_environment.APP_environmentRainy",
+        "formula": "signals['ID25BAPP_environment.APP_environmentRainy'] * 100"
+    },
+    "Vehicle.Body.Windshield.Front.IsHeatingOn": {
+        "namespace": "VehicleBus",
+        "name": "ID3A1VCFRONT_vehicleStatus.VCFRONT_APGlassHeaterState",
+        "formula": "signals['ID3A1VCFRONT_vehicleStatus.VCFRONT_APGlassHeaterState'] == 1"
+    },
+    
+    "Vehicle.Body.Windshield.Front.WasherFluid.IsLevelLow": {
+        "namespace": "VehicleBus",
+        "name": "ID801VCFRONT_sensors.VCFRONT_washerFluidLevel",
+        "formula": "signals['ID801VCFRONT_sensors.VCFRONT_washerFluidLevel'] == 1"
+    },
+    "Vehicle.Body.Mirrors.DriverSide.IsFolded": {
+        "namespace": "VehicleBus",
+        "name": "ID102VCLEFT_doorStatus.VCLEFT_mirrorFoldState",
+        "formula": "signals['ID102VCLEFT_doorStatus.VCLEFT_mirrorFoldState'] == 1"
+    },
+    "Vehicle.Body.Mirrors.PassengerSide.IsFolded": {
+        "namespace": "VehicleBus",
+        "name": "ID103VCRIGHT_doorStatus.VCRIGHT_mirrorFoldState",
+        "formula": "signals['ID103VCRIGHT_doorStatus.VCRIGHT_mirrorFoldState'] == 1"
+    },
+    "Vehicle.Body.Mirrors.DriverSide.IsHeatingOn": {
+        "namespace": "VehicleBus",
+        "name": "ID102VCLEFT_doorStatus.VCLEFT_mirrorHeatState",
+        "formula": "signals['ID102VCLEFT_doorStatus.VCLEFT_mirrorHeatState'] == 1"
+    },
+    "Vehicle.Chassis.Brake.PedalPosition": {
+        "namespace": "VehicleBus",
+        "name": "ID962VCLEFT_switchStatus.VCLEFT_brakePressed",
+        "formula": "signals['ID962VCLEFT_switchStatus.VCLEFT_brakePressed'] * 100"
+    },
+    "Vehicle.Powertrain.TractionBattery.Charging.IsCharging": {
+        "namespace": "VehicleBus",
+        "name": "ID212BMS_status.BMS_uiChargeStatus",
+        "formula": "signals['ID212BMS_status.BMS_uiChargeStatus'] == 3"
+    },
+    "Vehicle.Powertrain.TractionBattery.Charging.ChargeRate": {
+        "namespace": "VehicleBus",
+        "name": "ID212BMS_status.BMS_chgPowerAvailable",
+        "formula": "signals['ID212BMS_status.BMS_chgPowerAvailable'] * 0.277778"
+    },
+    "Vehicle.Powertrain.TractionBattery.Charging.TimeToComplete": {
+        "namespace": "VehicleBus",
+        "name": "ID132HVBattAmpVolt.ChargeHoursRemaining132",
+        "formula": "signals['ID132HVBattAmpVolt.ChargeHoursRemaining132'] * 60"
+    },
+    "Vehicle.Chassis.ParkingBrake.IsEngaged": {
+        "namespace": "VehicleBus",
+        "name": "ID228EPBrightStatus.EPBRunitStatus228",
+        "formula": "signals['ID228EPBrightStatus.EPBRunitStatus228'] == 3"
+    }
+}

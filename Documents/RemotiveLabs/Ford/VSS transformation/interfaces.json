@@ -1,0 +1,48 @@
+{
+  "chains" : [ {
+    "namespace" : "HS1",
+    "type" : "udp",
+    "database" : "db/Y2020_FNV2_CMDB_v20.10_HS1.dbc",
+    "server_port" : 2000,
+    "target_host" : "127.0.0.1",
+    "target_port" : 2005,
+    "short_names" : false
+  }, {
+    "namespace" : "HS2",
+    "type" : "udp",
+    "database" : "db/Y2020_FNV2_CMDB_v20.10_HS2.dbc",
+    "server_port" : 2001,
+    "target_host" : "127.0.0.1",
+    "target_port" : 2006,
+    "short_names" : false
+  }, {
+    "namespace" : "HS3",
+    "type" : "udp",
+    "database" : "db/Y2020_FNV2_CMDB_v20.10_HS3.dbc",
+    "server_port" : 2002,
+    "target_host" : "127.0.0.1",
+    "target_port" : 2007,
+    "short_names" : false
+  }, {
+    "namespace" : "HS4",
+    "type" : "udp",
+    "database" : "db/Y2020_FNV2_CMDB_v20.10_HS4.dbc",
+    "server_port" : 2003,
+    "target_host" : "127.0.0.1",
+    "target_port" : 2008,
+    "short_names" : false
+  }, {
+    "namespace" : "MS1",
+    "type" : "udp",
+    "database" : "db/Y2020_FNV2_CMDB_v20.10_MS1.dbc",
+    "server_port" : 2004,
+    "target_host" : "127.0.0.1",
+    "target_port" : 2009,
+    "short_names" : false
+  }, {
+    "namespace" : "vss",
+    "type" : "scripted",
+    "database" : "scripted_signals.json",
+    "public" : true
+  } ]
+}
